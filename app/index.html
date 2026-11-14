@@ -86,19 +86,55 @@ h1.h{font-size:26px;font-weight:800;letter-spacing:-.4px}
 .split{display:flex;gap:14px;align-items:stretch}
 .side-user{margin-top:auto;display:flex;align-items:center;gap:10px;padding:10px 6px;border-top:1px solid var(--line2)}
 
+/* phone layout: drawer menu + bottom tab bar */
+.m-only{display:none!important}
+.tabbar,.scrim{display:none}
 @media (max-width:820px){
-  .side{flex-basis:100%;border-right:0;border-bottom:1px solid var(--line);padding:14px 16px;gap:10px}
-  .navlist{flex-direction:row;overflow-x:auto;gap:4px;padding-bottom:4px}
-  .navbtn{width:auto;white-space:nowrap}
-  .sep,.side-user{display:none}
+  .m-only{display:inline-flex!important}
+  .d-only{display:none!important}
+  .app{display:block}
+  .side{position:fixed;top:0;bottom:0;left:0;width:min(300px,86vw);z-index:70;transform:translateX(-105%);transition:transform .22s ease;overflow-y:auto;box-shadow:0 20px 50px rgba(10,15,71,.25);padding:max(16px,env(safe-area-inset-top,0px)) 16px max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+  .side.open{transform:none}
+  .scrim{display:block;position:fixed;inset:0;background:rgba(10,15,71,.45);z-index:65}
+  .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;flex-wrap:nowrap;gap:6px;padding:8px max(12px,env(safe-area-inset-right,0px)) 8px max(8px,env(safe-area-inset-left,0px))}
+  body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:#fff;z-index:41}
+  .top .wallet{padding:4px 10px;min-height:38px;font-size:13.5px}
+  .top .wallet .btn,.top .wallet svg{display:none}
+  .content{padding:16px max(16px,env(safe-area-inset-right,0px)) calc(100px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));gap:18px}
+  h1.h{font-size:22px}
   .split{flex-direction:column}
-  .top{padding:12px 16px}
-  .content{padding:20px 16px 40px}
+  .split > *{flex-basis:auto!important}
+  .chip-scroll{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;margin-inline:-2px}
+  .chip-scroll > *{flex:none}
+  .tabbar{display:grid;position:fixed;left:0;right:0;bottom:0;z-index:50;background:#fff;border-top:1px solid var(--line);grid-template-columns:repeat(5,minmax(0,1fr));padding:4px max(4px,env(safe-area-inset-right,0px)) calc(4px + env(safe-area-inset-bottom,0px)) max(4px,env(safe-area-inset-left,0px));box-shadow:0 -6px 20px rgba(10,15,71,.06)}
+  .tabbar button{border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:600;color:var(--slate);min-height:54px;position:relative;border-radius:10px}
+  .tabbar button.on{color:var(--blue)}
+  .tabbar button.on::before{content:"";position:absolute;top:0;width:28px;height:3px;border-radius:0 0 3px 3px;background:var(--blue)}
+  .tabbar .b{position:absolute;top:4px;left:calc(50% + 6px);background:var(--blue);color:#fff;border-radius:999px;font-size:10px;line-height:16px;min-width:16px;padding:0 4px}
+  .inbox-split .chatpane,.inbox-split .leadpane{display:none!important}
+  .inbox-split.show-chat .listpane{display:none!important}
+  .inbox-split.show-chat .chatpane{display:flex!important}
+  .inbox-split.show-details .listpane,.inbox-split.show-details .chatpane{display:none!important}
+  .inbox-split.show-details .leadpane{display:flex!important}
+  .chatpane .chat-window{display:none!important}
+  .tbl-cards thead{display:none}
+  .tbl-cards,.tbl-cards tbody,.tbl-cards tr,.tbl-cards td{display:block;width:100%}
+  .tbl-cards tr{border-bottom:1px solid var(--line2);padding:12px 16px}
+  .tbl-cards tr:last-child{border-bottom:0}
+  .tbl-cards td{border:0!important;padding:3px 0!important;min-width:0!important;white-space:normal!important}
+  .tbl-cards td[data-label]::before{content:attr(data-label);display:block;font-size:11.5px;color:var(--slate);font-weight:600}
+  .set-nav{flex-direction:row!important;overflow-x:auto;flex:0 0 auto!important;width:100%}
+  .set-nav .navbtn{white-space:nowrap;width:auto;flex:none}
 }
 .help-fab{position:fixed;right:max(20px,env(safe-area-inset-right,0px));bottom:max(20px,env(safe-area-inset-bottom,0px));z-index:45;display:flex;align-items:center;gap:8px;border:0;border-radius:999px;background:var(--blue);color:#fff;padding:12px 18px 12px 14px;font-weight:600;font-size:14.5px;box-shadow:0 10px 28px rgba(10,30,245,.35);min-height:48px}
 .help-fab:hover{background:#0816c4}
 .help-panel{position:fixed;right:max(20px,env(safe-area-inset-right,0px));bottom:max(20px,env(safe-area-inset-bottom,0px));z-index:45;width:380px;max-width:calc(100% - 32px);height:min(600px,calc(100% - 40px));background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 20px 50px rgba(10,15,71,.22);display:flex;flex-direction:column;overflow:hidden}
 .help-panel .tabs{flex:none}
+@media (max-width:820px){
+  .help-fab{bottom:calc(74px + env(safe-area-inset-bottom,0px));right:max(14px,env(safe-area-inset-right,0px));padding:12px;min-height:46px}
+  .help-fab span{display:none}
+  .help-panel{top:0;left:0;right:0;bottom:0;width:100%;max-width:none;height:100%;border-radius:0;border:0;z-index:80}
+}
 @media (prefers-reduced-motion:no-preference){.btn,.chip,.navbtn{transition:background .12s,color .12s}}
 </style>
 
@@ -256,8 +292,11 @@ function sidebar(){
     const on = S.screen === n.id || (n.id === 'home' && S.screen === 'setup');
     return `<button class="navbtn${on?' on':''}" data-act="nav" data-arg="${n.id}" ${on?'aria-current="page"':''}>${ic(n.id)}<span class="lab">${n.label}</span>${n.badge?`<span class="pill" style="background:var(--blue);color:#fff;padding:1px 8px">${n.badge}</span>`:''}</button>`;
   };
-  return `<aside class="side">
-    <div class="h" style="font-size:20px;font-weight:800;letter-spacing:-.4px;padding:0 6px">Simple Floww<div style="font-family:var(--f-body);font-size:11.5px;font-weight:600;letter-spacing:1px;color:var(--blue)">BUSINESS PORTAL</div></div>
+  return `<aside class="side${S.drawer?' open':''}">
+    <div class="row" style="justify-content:space-between;flex-wrap:nowrap">
+      <div class="h" style="font-size:20px;font-weight:800;letter-spacing:-.4px;padding:0 6px">Simple Floww<div style="font-family:var(--f-body);font-size:11.5px;font-weight:600;letter-spacing:1px;color:var(--blue)">BUSINESS PORTAL</div></div>
+      <button class="btn m-only" style="width:40px;padding:0" aria-label="Close menu" data-act="menu">${ic('x',18)}</button>
+    </div>
     <div style="position:relative">
       <button class="switch" data-act="switch" aria-expanded="${S.switchOpen}">${ic('swap',18)}<span style="flex:1;text-align:left">Switch App</span><span aria-hidden="true">▾</span></button>
       ${S.switchOpen ? `<div class="pop" style="top:46px;left:0;right:0" role="menu">
@@ -271,6 +310,11 @@ function sidebar(){
       <div class="sep"></div>
       ${foot.map(btn).join('')}
     </nav>
+    <div class="m-only" style="flex-direction:column;gap:6px;background:var(--cloud);border-radius:12px;padding:10px">
+      <span class="muted" style="font-size:12px;font-weight:600">View as (demo)</span>
+      <div class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn${owner()?' chip on':''}" style="flex:1;min-height:36px" data-act="role" data-arg="owner">Owner</button><button class="btn${!owner()?' chip on':''}" style="flex:1;min-height:36px" data-act="role" data-arg="agent">Sales agent</button></div>
+      <span class="pill p-cyan" style="align-self:flex-start">Sample data</span>
+    </div>
     <div class="side-user">
       <span class="av" style="width:36px;height:36px">${owner()?'AK':'RA'}</span>
       <div style="min-width:0"><div style="font-weight:600;font-size:14px">${owner()?'Abhinandan Kumar':'Ranjana'}</div><div class="muted" style="font-size:12.5px">${owner()?'Owner':'Sales agent'}</div></div><a href="/" style="margin-left:auto;font-size:12.5px;font-weight:600;color:var(--blue);text-decoration:none;white-space:nowrap">Log out</a>
@@ -280,19 +324,22 @@ function sidebar(){
 
 function topbar(){
   return `<header class="top">
-    <label style="flex:1 1 240px;min-width:0;position:relative;display:block">
+    <button class="btn btn-q m-only" style="width:42px;min-height:42px;padding:0;color:var(--navy)" aria-label="Open menu" aria-expanded="${!!S.drawer}" data-act="menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <span class="h m-only" style="font-size:17px;font-weight:800;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Simple Floww</span>
+    <button class="btn btn-q m-only" style="width:40px;min-height:40px;padding:0;color:var(--navy)" aria-label="Search">${ic('search',19)}</button>
+    <label class="d-only" style="flex:1 1 240px;min-width:0;position:relative;display:block">
       <span style="position:absolute;left:12px;top:11px;color:var(--slate)">${ic('search',18)}</span>
       <input id="q" class="inp" style="padding-left:38px;background:var(--cloud);border-color:var(--cloud)" placeholder="Search name, number or message" aria-label="Search">
     </label>
-    <div class="row" style="gap:4px;background:var(--cloud);border-radius:10px;padding:4px" role="group" aria-label="Preview as role">
+    <div class="row d-only" style="gap:4px;background:var(--cloud);border-radius:10px;padding:4px" role="group" aria-label="Preview as role">
       <span class="muted" style="font-size:12.5px;padding:0 6px">View as</span>
       <button class="btn${owner()?' chip on':''}" style="min-height:34px;${owner()?'':'border-color:transparent'}" data-act="role" data-arg="owner">Owner</button>
       <button class="btn${!owner()?' chip on':''}" style="min-height:34px;${!owner()?'':'border-color:transparent'}" data-act="role" data-arg="agent">Sales agent</button>
     </div>
-    <span class="pill p-cyan">Sample data</span>
-    ${owner() ? `<div class="wallet" title="Message wallet">${ic('wallet',18)}<span style="font-variant-numeric:tabular-nums">${money(BALANCE)}</span><button class="btn btn-p" data-act="recharge">Recharge</button></div>` : ''}
-    <button class="btn" aria-label="Notifications" style="width:40px;padding:0;position:relative">${ic('bell',19)}<span style="position:absolute;top:6px;right:7px;width:8px;height:8px;border-radius:999px;background:#e5484d"></span></button>
-    <span class="av" style="width:40px;height:40px" aria-label="Profile">${owner()?'AK':'RA'}</span>
+    <span class="pill p-cyan d-only">Sample data</span>
+    ${owner() ? `<div class="wallet" title="Message wallet" data-act="recharge" style="cursor:pointer">${ic('wallet',18)}<span style="font-variant-numeric:tabular-nums">${money(BALANCE)}</span><button class="btn btn-p" data-act="recharge">Recharge</button></div>` : ''}
+    <button class="btn" aria-label="Notifications" style="width:40px;padding:0;position:relative;flex:none">${ic('bell',19)}<span style="position:absolute;top:6px;right:7px;width:8px;height:8px;border-radius:999px;background:#e5484d"></span></button>
+    <span class="av d-only" style="width:40px;height:40px" aria-label="Profile">${owner()?'AK':'RA'}</span>
   </header>`;
 }
 
@@ -400,9 +447,9 @@ function inbox(){
   const list = CHATS.filter(cur.f);
   return `<div class="stack" style="gap:14px">
     <h1 class="h">Inbox</h1>
-    <div class="row">${tabs.map(t=>{const on=t.id===cur.id;return `<button class="btn${on?' chip on':''}" data-act="itab" data-arg="${t.id}">${t.label} <span style="border-radius:999px;padding:0 7px;font-size:12px;${on?'background:rgba(255,255,255,.2)':'background:var(--tint-blue);color:var(--blue)'}">${CHATS.filter(t.f).length}</span></button>`}).join('')}</div>
-    <div class="split">
-      <div class="card" style="flex:0 1 330px;min-width:0;overflow:hidden">
+    <div class="row chip-scroll${S.mChat||S.mDetails?' d-only':''}">${tabs.map(t=>{const on=t.id===cur.id;return `<button class="btn${on?' chip on':''}" data-act="itab" data-arg="${t.id}">${t.label} <span style="border-radius:999px;padding:0 7px;font-size:12px;${on?'background:rgba(255,255,255,.2)':'background:var(--tint-blue);color:var(--blue)'}">${CHATS.filter(t.f).length}</span></button>`}).join('')}</div>
+    <div class="split inbox-split${S.mChat?' show-chat':''}${S.mDetails?' show-details':''}">
+      <div class="card listpane" style="flex:0 1 330px;min-width:0;overflow:hidden">
         ${list.map((c,i)=>`<button style="width:100%;border:0;border-bottom:1px solid var(--line2);padding:12px 14px;display:flex;gap:12px;text-align:left;align-items:flex-start;background:${i===S.activeChat?'var(--cloud)':'#fff'}" data-act="chat" data-arg="${i}">
           <span class="av" style="width:40px;height:40px">${c.ini}</span>
           <span class="stack" style="flex:1;min-width:0;gap:2px">
@@ -411,10 +458,13 @@ function inbox(){
             <span class="row" style="gap:6px"><span class="pill" style="background:var(--cloud);color:var(--slate);font-weight:500;padding:1px 8px">${c.owner}</span>${c.pending?'<span class="pill p-warn" style="padding:1px 8px">Awaiting reply</span>':''}</span>
           </span></button>`).join('') || '<p class="muted" style="padding:18px;margin:0">No chats in this tab.</p>'}
       </div>
-      <div class="card stack" style="flex:1 1 380px;min-width:0;overflow:hidden">
+      <div class="card stack chatpane" style="flex:1 1 380px;min-width:0;overflow:hidden">
         <div class="row" style="padding:14px 18px;border-bottom:1px solid var(--line2);justify-content:space-between">
-          <div><div style="font-weight:700;font-size:15.5px">Neha Verma</div><div class="muted" style="font-size:13px">+91 98XXX XX210 · From a Facebook ad</div></div>
-          <span class="pill p-ok">Free reply window: 23 hours left</span>
+          <div class="row" style="gap:6px;flex-wrap:nowrap;min-width:0">
+            <button class="btn btn-q m-only" style="width:36px;min-height:36px;padding:0;color:var(--navy);flex:none" aria-label="Back to chats" data-act="m-back"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+            <div style="min-width:0"><div style="font-weight:700;font-size:15.5px">Neha Verma</div><div class="muted" style="font-size:13px">+91 98XXX XX210 · From a Facebook ad</div></div>
+          </div>
+          <div class="row" style="gap:6px"><span class="pill p-ok">Free reply window: 23 hours left</span><button class="btn m-only" style="min-height:34px" data-act="m-details">Lead details</button></div>
         </div>
         <div class="stack" style="flex:1;padding:18px;gap:12px;background:#f6f8fc">
           <div style="align-self:flex-end;max-width:82%;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 14px"><span class="pill p-cyan" style="padding:0 8px;font-size:11px;margin-bottom:4px">Bot</span><div>What would you like to use Simple Floww for?</div><div class="row" style="gap:6px;margin-top:8px"><span class="pill" style="border:1px solid #cfd7f0;color:var(--blue);font-weight:500">Bulk Messaging</span><span class="pill" style="border:1px solid #cfd7f0;color:var(--blue);font-weight:500">Chatbot</span><span class="pill" style="border:1px solid #cfd7f0;color:var(--blue);font-weight:500">CRM</span></div></div>
@@ -429,8 +479,8 @@ function inbox(){
           <button class="btn btn-p" aria-label="Send" style="width:42px;padding:0;flex:0 0 42px">${ic('send',18,2)}</button>
         </div>
       </div>
-      <div class="card stack" style="flex:0 1 270px;min-width:0;padding:18px;gap:14px">
-        <h3 class="h" style="font-size:15px;font-weight:700">Lead details</h3>
+      <div class="card stack leadpane" style="flex:0 1 270px;min-width:0;padding:18px;gap:14px">
+        <div class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn btn-q m-only" style="width:36px;min-height:36px;padding:0;color:var(--navy)" aria-label="Back to chat" data-act="m-details"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><h3 class="h" style="font-size:15px;font-weight:700">Lead details</h3></div>
         <label><span class="lbl">Stage</span><select class="inp"><option>New lead</option><option selected>Interested</option><option>Demo booked</option><option>Won</option><option>Lost</option></select></label>
         <label><span class="lbl">Assigned to</span><select class="inp"><option>Gunjan</option><option>Ranjana</option><option>Abhinandan</option></select></label>
         <div><span class="lbl">Next follow-up</span><div class="row" style="justify-content:space-between"><span>Tomorrow, 11:00 AM</span><button class="btn btn-q">Change</button></div></div>
@@ -445,11 +495,11 @@ function leads(){
   const cur = VIEWS.find(v=>v.id===S.leadFilter) || VIEWS[0];
   const base = owner() ? LEADS : LEADS.filter(l=>l.mine);
   const vis = base.filter(cur.f);
-  const table = `<div class="card tblwrap"><table class="tbl"><thead><tr><th>Name</th><th>Stage</th><th>Assigned to</th><th>Last message</th><th>Next follow-up</th></tr></thead><tbody>
+  const table = `<div class="card tblwrap"><table class="tbl tbl-cards"><thead><tr><th>Name</th><th>Stage</th><th>Assigned to</th><th>Last message</th><th>Next follow-up</th></tr></thead><tbody>
     ${vis.map(l=>`<tr><td style="white-space:nowrap"><div style="font-weight:600">${l.name}</div><div class="muted" style="font-size:12.5px">${l.phone}</div></td>
-      <td><span class="pill ${STAGE_PILL[l.stage]}">${l.stage}</span></td><td style="white-space:nowrap">${l.owner}</td>
-      <td style="min-width:220px"><div>${l.last}</div><div class="muted" style="font-size:12.5px">${l.when}</div></td>
-      <td style="white-space:nowrap;${l.late?'color:var(--bad);font-weight:600':''}">${l.next}</td></tr>`).join('') || '<tr><td colspan="5" class="muted">No leads in this view.</td></tr>'}
+      <td data-label="Stage"><span class="pill ${STAGE_PILL[l.stage]}">${l.stage}</span></td><td data-label="Assigned to" style="white-space:nowrap">${l.owner}</td>
+      <td data-label="Last message" style="min-width:220px"><div>${l.last}</div><div class="muted" style="font-size:12.5px">${l.when}</div></td>
+      <td data-label="Next follow-up" style="white-space:nowrap;${l.late?'color:var(--bad);font-weight:600':''}">${l.next}</td></tr>`).join('') || '<tr><td colspan="5" class="muted">No leads in this view.</td></tr>'}
   </tbody></table></div>`;
   const board = `<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">${['New lead','Interested','Demo booked','Won'].map(c=>{const cs=vis.filter(l=>l.stage===c);return `
     <div class="stack" style="background:#eef2fb;border-radius:14px;padding:12px;gap:8px">
@@ -822,7 +872,7 @@ function settings(){
   else body = `<div class="card stack" style="padding:24px;gap:8px"><h2 class="h" style="font-size:18px;font-weight:700">${cur[1]}</h2><p class="muted" style="margin:0;font-size:14px">${cur[2]}</p><p class="muted" style="margin:8px 0 0;font-size:13px">This section's form is not built in the prototype. Open "Team &amp; roles" or "Billing &amp; wallet" to see full examples.</p></div>`;
   return `<div class="stack" style="gap:16px"><h1 class="h">Settings</h1>
     <div class="split" style="gap:16px;align-items:flex-start">
-      <nav class="card stack" aria-label="Settings sections" style="flex:0 0 230px;padding:8px;gap:2px;max-width:100%">${SET.map(([id,l])=>`<button class="navbtn${S.setTab===id?' on':''}" style="min-height:40px;padding:9px 12px;font-size:14px;color:${S.setTab===id?'var(--blue)':'var(--navy)'}" data-act="stab" data-arg="${id}">${l}</button>`).join('')}</nav>
+      <nav class="card stack set-nav" aria-label="Settings sections" style="flex:0 0 230px;padding:8px;gap:2px;max-width:100%">${SET.map(([id,l])=>`<button class="navbtn${S.setTab===id?' on':''}" style="min-height:40px;padding:9px 12px;font-size:14px;color:${S.setTab===id?'var(--blue)':'var(--navy)'}" data-act="stab" data-arg="${id}">${l}</button>`).join('')}</nav>
       <div class="stack" style="flex:1 1 400px;min-width:0;gap:14px">${body}</div>
     </div></div>`;
 }
@@ -843,11 +893,13 @@ const SCREENS = {home, setup, inbox, leads, followups, campaigns, automations, r
 function render(){
   const root = document.getElementById('app');
   const y = window.scrollY;
-  root.innerHTML = `<div class="app">${sidebar()}<div class="main">${topbar()}<main class="content" id="main">${(SCREENS[S.screen]||home)()}</main></div></div>${widget()}${videoModal()}`;
+  const tabItems = [['home','Home'],['inbox','Inbox','12'],['leads','Leads'],['followups','Follow-ups','5']];
+  const tabbar = `<nav class="tabbar" aria-label="Quick menu">${tabItems.map(([id,l,b])=>`<button class="${S.screen===id||(id==='home'&&S.screen==='setup')?'on':''}" data-act="nav" data-arg="${id}">${ic(id,22)}<span>${l}</span>${b?`<span class="b">${b}</span>`:''}</button>`).join('')}<button class="${S.drawer?'on':''}" data-act="menu" aria-label="Open full menu"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span>Menu</span></button></nav>`;
+  root.innerHTML = `<div class="app">${sidebar()}<div class="main">${topbar()}<main class="content" id="main">${(SCREENS[S.screen]||home)()}</main></div></div>${S.drawer?'<div class="scrim" data-act="menu"></div>':''}${tabbar}${widget()}${videoModal()}`;
   window.scrollTo(0, y);
   const wc = document.getElementById('wchat'); if (wc) wc.scrollTop = wc.scrollHeight;
 }
-function go(screen, extra){ Object.assign(S, {screen, wizard:false, switchOpen:false, article:null, ticketNew:false}, extra||{}); render(); window.scrollTo(0,0); }
+function go(screen, extra){ Object.assign(S, {screen, wizard:false, switchOpen:false, article:null, ticketNew:false, drawer:false, mChat:false, mDetails:false}, extra||{}); render(); window.scrollTo(0,0); }
 function addTicket(sub, cat){
   const n = 1043 + S.tickets.filter(t=>+t.id.slice(4)>=1043).length;
   S.tickets.unshift({id:'#SF-'+n, sub, cat, status:'Open', when:'Just now'});
@@ -888,6 +940,9 @@ document.addEventListener('click', e => {
   if (a==='video-close-bg' && e.target !== el) return;
   switch(a){
     case 'nav': return go(v);
+    case 'menu': S.drawer = !S.drawer; return render();
+    case 'm-back': S.mChat = false; S.mDetails = false; return render();
+    case 'm-details': S.mDetails = !S.mDetails; S.mChat = !S.mDetails; render(); return window.scrollTo(0,0);
     case 'switch': S.switchOpen = !S.switchOpen; return render();
     case 'role':
       S.role = v;
@@ -928,7 +983,7 @@ document.addEventListener('click', e => {
     case 'connect': S.waConnected=true; S.done.wa=true; return render();
     case 'send-test': S.testSent=true; S.done.test=true; return render();
     case 'itab': S.inboxTab=v; S.activeChat=0; return render();
-    case 'chat': S.activeChat=+v; return render();
+    case 'chat': S.activeChat=+v; S.mChat=true; S.mDetails=false; render(); return window.scrollTo(0,0);
     case 'lview': S.leadsView=v; return render();
     case 'lfilter': S.leadFilter=v; return render();
     case 'ctab': S.campTab=v; return render();
@@ -945,7 +1000,7 @@ document.addEventListener('click', e => {
     case 'when': S.when=v; return render();
   }
 });
-document.addEventListener('keydown', e => { if (e.key==='Escape' && (S.video||S.switchOpen||S.wOpen)){ if (S.video) S.video=null; else S.wOpen=false; S.switchOpen=false; render(); } });
+document.addEventListener('keydown', e => { if (e.key==='Escape' && (S.video||S.switchOpen||S.wOpen||S.drawer)){ if (S.video) S.video=null; else if (S.drawer) S.drawer=false; else S.wOpen=false; S.switchOpen=false; render(); } });
 
 if (location.hash === "#setup") S.screen = "setup";
 if (location.hash === "#agent") { S.role = "agent"; S.inboxTab = "mine"; }
