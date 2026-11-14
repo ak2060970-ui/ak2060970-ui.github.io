@@ -1,0 +1,956 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+<style>html,body{margin:0;height:100%}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Simple Floww Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: app shell — fixed-width sidebar + fluid main; sidebar becomes a top strip on phones. Single light brand look (Simple Floww tokens). */
+:root{
+  --navy:#0a0f47; --blue:#0a1ef5; --cyan:#06d6fa; --green:#25d366;
+  --tint-blue:#e7eafe; --tint-cyan:#def8fe; --cloud:#f4f8ff; --paper:#ffffff;
+  --slate:#4a5275; --line:#dfe5f5; --line2:#edf1fa;
+  --warn-bg:#fff1de; --warn:#8a4b00; --bad-bg:#fde8ea; --bad:#a3262f; --ok-bg:#e3f9eb; --ok:#0b6b34;
+  --f-display:"Plus Jakarta Sans","Helvetica Neue",Arial,sans-serif;
+  --f-body:Inter,"Helvetica Neue",Arial,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{background:var(--cloud)}
+body{color:var(--navy);font-family:var(--f-body);font-size:14.5px;line-height:1.5}
+button{font:inherit;cursor:pointer;color:inherit}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.h{font-family:var(--f-display);color:var(--navy);margin:0;text-wrap:balance}
+.muted{color:var(--slate)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:16px}
+.btn{border:1px solid #cfd7f0;background:#fff;color:var(--navy);border-radius:10px;padding:9px 14px;font-weight:600;font-size:14px;min-height:40px;display:inline-flex;align-items:center;gap:8px;justify-content:center;white-space:nowrap}
+.btn:hover{background:var(--cloud)}
+.btn-p{background:var(--blue);border-color:var(--blue);color:#fff}.btn-p:hover{background:#0816c4}
+.btn-g{background:var(--green);border-color:var(--green);color:var(--navy)}.btn-g:hover{background:#1fbf5b}
+.btn-q{border:0;background:transparent;color:var(--blue);padding:6px 8px;min-height:32px}.btn-q:hover{background:var(--tint-blue)}
+.chip{border:1px solid #cfd7f0;background:#fff;color:var(--navy);border-radius:999px;padding:7px 14px;font-size:14px;font-weight:500;min-height:36px}
+.chip:hover{border-color:var(--blue)}
+.chip.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:600;white-space:nowrap}
+.p-blue{background:var(--tint-blue);color:var(--blue)}.p-cyan{background:var(--tint-cyan);color:var(--navy)}
+.p-ok{background:var(--ok-bg);color:var(--ok)}.p-warn{background:var(--warn-bg);color:var(--warn)}.p-bad{background:var(--bad-bg);color:var(--bad)}.p-grey{background:#f1f2f6;color:var(--slate)}
+.inp{border:1px solid #cfd7f0;border-radius:10px;padding:10px 12px;font:inherit;font-size:14px;color:var(--navy);background:#fff;min-height:42px;width:100%}
+.lbl{font-size:13px;font-weight:600;display:block;margin-bottom:6px}
+.bar{height:8px;border-radius:999px;background:var(--tint-blue);overflow:hidden}
+.bar > i{display:block;height:100%;border-radius:999px}
+.tblwrap{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-weight:600;color:var(--slate);font-size:12.5px;padding:10px 14px;border-bottom:1px solid var(--line);background:#f8faff;white-space:nowrap}
+.tbl td{padding:12px 14px;border-bottom:1px solid var(--line2);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
+.av{border-radius:999px;background:var(--tint-blue);color:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex:none}
+.grid{display:grid;gap:12px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.stack{display:flex;flex-direction:column}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);overflow-x:auto}
+.tab{border:0;background:transparent;padding:10px 14px;font-weight:600;font-size:14.5px;min-height:44px;margin-bottom:-1px;color:var(--slate);border-bottom:2px solid transparent;white-space:nowrap}
+.tab.on{color:var(--blue);border-bottom-color:var(--blue)}
+.seg{display:flex;background:#fff;border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
+.seg .btn{border-color:transparent;min-height:34px}
+.seg .btn.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.box{text-align:left;border-radius:12px;padding:14px;min-height:64px;border:1px solid #cfd7f0;background:#fff;width:100%}
+.box.on{border:2px solid var(--blue);background:var(--cloud)}
+.note-warn{background:var(--warn-bg);color:#5c3200;border-radius:10px;padding:10px 14px;font-size:13.5px}
+h1.h{font-size:26px;font-weight:800;letter-spacing:-.4px}
+
+/* shell */
+.app{min-height:100%;display:flex;flex-wrap:wrap}
+.side{flex:0 0 248px;background:#fff;border-right:1px solid var(--line);padding:20px 16px;display:flex;flex-direction:column;gap:16px;position:relative}
+.main{flex:999 1 560px;min-width:0;display:flex;flex-direction:column}
+.top{background:#fff;border-bottom:1px solid var(--line);padding:12px 24px;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.content{padding:28px 24px 48px;display:flex;flex-direction:column;gap:24px;max-width:1240px;width:100%}
+.navlist{display:flex;flex-direction:column;gap:2px}
+.navbtn{display:flex;align-items:center;gap:12px;width:100%;border:0;border-radius:10px;padding:10px 12px;font-size:14.5px;text-align:left;min-height:44px;background:transparent;color:var(--slate);font-weight:500}
+.navbtn:hover{background:var(--cloud)}
+.navbtn.on{background:var(--tint-blue);color:var(--blue);font-weight:600}
+.navbtn svg{flex:0 0 20px}
+.navbtn .lab{flex:1}
+.sep{height:1px;background:var(--line2);margin:10px 4px}
+.switch{display:flex;align-items:center;gap:10px;width:100%;border:1px solid var(--line);background:var(--cloud);border-radius:10px;padding:8px 12px;min-height:40px;font-size:13.5px;font-weight:600;color:var(--slate)}
+.pop{position:absolute;z-index:20;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 32px rgba(10,15,71,.14);padding:8px;min-width:240px}
+.wallet{display:flex;align-items:center;gap:8px;border:1px solid #cfd7f0;background:var(--tint-blue);color:var(--blue);border-radius:10px;padding:4px 4px 4px 12px;min-height:40px;font-weight:700}
+.wallet .btn{min-height:32px;padding:5px 10px;font-size:13px}
+.split{display:flex;gap:14px;align-items:stretch}
+.side-user{margin-top:auto;display:flex;align-items:center;gap:10px;padding:10px 6px;border-top:1px solid var(--line2)}
+
+@media (max-width:820px){
+  .side{flex-basis:100%;border-right:0;border-bottom:1px solid var(--line);padding:14px 16px;gap:10px}
+  .navlist{flex-direction:row;overflow-x:auto;gap:4px;padding-bottom:4px}
+  .navbtn{width:auto;white-space:nowrap}
+  .sep,.side-user{display:none}
+  .split{flex-direction:column}
+  .top{padding:12px 16px}
+  .content{padding:20px 16px 40px}
+}
+.help-fab{position:fixed;right:max(20px,env(safe-area-inset-right,0px));bottom:max(20px,env(safe-area-inset-bottom,0px));z-index:45;display:flex;align-items:center;gap:8px;border:0;border-radius:999px;background:var(--blue);color:#fff;padding:12px 18px 12px 14px;font-weight:600;font-size:14.5px;box-shadow:0 10px 28px rgba(10,30,245,.35);min-height:48px}
+.help-fab:hover{background:#0816c4}
+.help-panel{position:fixed;right:max(20px,env(safe-area-inset-right,0px));bottom:max(20px,env(safe-area-inset-bottom,0px));z-index:45;width:380px;max-width:calc(100% - 32px);height:min(600px,calc(100% - 40px));background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 20px 50px rgba(10,15,71,.22);display:flex;flex-direction:column;overflow:hidden}
+.help-panel .tabs{flex:none}
+@media (prefers-reduced-motion:no-preference){.btn,.chip,.navbtn{transition:background .12s,color .12s}}
+</style>
+
+<div id="app"></div>
+
+<script>
+(function(){
+// ---------- icons ----------
+const I = {
+  home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  inbox:'<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>',
+  leads:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7"/><path d="M18 14.8c1.9.7 3.1 2.4 3.5 5.2"/>',
+  followups:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  campaigns:'<path d="M3 10v4l11 5V5z"/><path d="M14 8a4 4 0 0 1 0 8"/><path d="M6 14.5V19h3v-3"/>',
+  automations:'<rect x="4" y="8" width="16" height="11" rx="3"/><path d="M12 8V4"/><circle cx="9" cy="13.5" r="1"/><circle cx="15" cy="13.5" r="1"/>',
+  reports:'<path d="M5 20V11M11 20V5M17 20v-6M3 20h18"/>',
+  help:'<circle cx="12" cy="12" r="9"/><path d="m10 8.5 5 3.5-5 3.5z"/>',
+  settings:'<circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>',
+  spark:'<path d="M12 3l1.8 4.7 4.7 1.8-4.7 1.8L12 16l-1.8-4.7-4.7-1.8 4.7-1.8z"/>',
+  check:'<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
+  bell:'<path d="M6 16v-5a6 6 0 1 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+  wallet:'<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/><path d="M16 14.5h2"/>',
+  swap:'<path d="M7 7h12l-3-3M17 17H5l3 3"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  send:'<path d="M4 12 20 4l-6 16-3-7z"/>',
+  play:'<path d="M8 5.5v13l11-6.5z" fill="currentColor" stroke="none"/>',
+  doc:'<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/>',
+  x:'<path d="M6 6l12 12M18 6 6 18"/>',
+  phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>'
+};
+const ic = (n, s=20, w=1.8) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[n]}</svg>`;
+const money = x => '₹' + x.toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
+const nf = x => x.toLocaleString('en-IN');
+
+// ---------- state ----------
+const S = {
+  screen:'home', role:'owner', switchOpen:false,
+  done:{wa:true,profile:false,bot:false,test:false,template:false,contacts:false,team:false},
+  biz:null, source:null, team:null, planApplied:false, waConnected:false, testSent:false,
+  video:null, inboxTab:'pending', activeChat:0, leadsView:'list', leadFilter:'all',
+  campTab:'broadcasts', wizard:false, wstep:1, aud:'hot', tpl:0, when:'now', campSent:false,
+  autoTab:'bots', setTab:'team', recharge:1000,
+  helpTab:'overview', helpQ:'', article:null, kbCat:'', vidCat:'', watched:['v1'], helpful:{}, ticketNew:false,
+  wOpen:false, wTab:'home', wTicketNew:false, wHuman:false,
+  wMsgs:[{t:'Hi! I am the Simple Floww assistant. Ask me anything about the panel, or pick a common question below.'}],
+  tickets:[
+    {id:'#SF-1042',sub:'Campaign "Rentmeter" mostly failed',cat:'Campaigns & templates',status:'Waiting on you',when:'Today, 11:20 AM'},
+    {id:'#SF-1038',sub:'Template rejected: payment reminder',cat:'Campaigns & templates',status:'In progress',when:'Yesterday'},
+    {id:'#SF-1031',sub:'Wallet recharge of ₹5,000 not credited',cat:'Billing & wallet',status:'Resolved',when:'12 Nov'}
+  ]
+};
+const BALANCE = 428.32;
+const owner = () => S.role === 'owner';
+
+// ---------- data ----------
+const NAV = [
+  {id:'home',label:'Home',agent:true},{id:'inbox',label:'Inbox',badge:'12',agent:true},
+  {id:'leads',label:'Leads',agent:true},{id:'followups',label:'Follow-ups',badge:'5',agent:true},
+  {id:'campaigns',label:'Campaigns'},{id:'automations',label:'Automations'},{id:'reports',label:'Reports'}
+];
+const STEPS = [
+  {id:'wa',title:'Connect your WhatsApp number',sub:'Through Facebook login, about 3 minutes',dur:'1:30',cta:'Connect',act:'go-setup'},
+  {id:'profile',title:'Tell AI about your business',sub:'3 questions, then stages, tags and messages are ready',dur:'1:10',cta:'Start',act:'go-setup'},
+  {id:'bot',title:'Turn on the welcome message',sub:'Reply to new customers instantly',dur:'0:50',cta:'View',act:'go-automations'},
+  {id:'test',title:'Send a test message to your phone',sub:'Make sure everything works',dur:'0:40',cta:'Test now',act:'go-test'},
+  {id:'template',title:'Get your first template approved',sub:'Needed to send campaigns',dur:'1:20',cta:'Create',act:'go-templates'},
+  {id:'contacts',title:'Import your existing contacts',sub:'From an Excel or CSV file',dur:'0:50',cta:'Import',act:'go-leads'},
+  {id:'team',title:'Invite your team',sub:'They get a link by email',dur:'0:40',cta:'Invite',act:'go-team'}
+];
+const BIZ = {
+  'Real estate':{stages:['Enquiry','Site visit','Negotiation','Booked'],tags:['2BHK','3BHK','Plot','Budget 50L+'],tpl:'Site visit reminder, New project launch'},
+  'Coaching / Education':{stages:['Enquiry','Demo class','Fees discussed','Admission'],tags:['Class 10','Class 12','Online','Offline'],tpl:'Demo class reminder, Admissions open'},
+  'Retail / E-commerce':{stages:['Enquiry','Product shared','Order placed','Repeat customer'],tags:['New customer','COD','Wants offer','VIP'],tpl:'Order update, Festive offer'},
+  'Clinic / Healthcare':{stages:['Enquiry','Appointment','Visited','Follow-up'],tags:['New patient','Report pending','Checkup','Medicine'],tpl:'Appointment reminder, Health camp'},
+  'Travel':{stages:['Enquiry','Itinerary sent','Advance paid','Trip done'],tags:['Honeymoon','Family','International','Group'],tpl:'Itinerary share, Seasonal offer'},
+  'Agency / Service':{stages:['Enquiry','Contacted','Proposal sent','Won'],tags:['Hot lead','Low budget','Referral','Call later'],tpl:'Meeting reminder, Case study share'}
+};
+const SOURCES = ['Facebook / Instagram ads','Website','IndiaMART / JustDial','Walk-in','Referral'];
+const TEAMS = ['Just me','2 to 5 people','6 to 20 people','More than 20'];
+const CHATS = [
+  {name:'Neha Verma',ini:'NV',time:'2 min',preview:'What is the monthly price? Can I get a demo?',owner:'Gunjan',unread:2,pending:true,mine:false,un:false},
+  {name:'Rohit Jain',ini:'RJ',time:'9 min',preview:'Selected button: Chatbot',owner:'Ranjana',unread:1,pending:true,mine:true,un:false},
+  {name:'Sunrise Realty',ini:'SR',time:'24 min',preview:'Photo',owner:'Unassigned',unread:1,pending:true,mine:false,un:true},
+  {name:'Aman Gupta',ini:'AG',time:'1 hr',preview:'Thank you! Our team will contact you shortly.',owner:'Ranjana',unread:0,pending:true,mine:true,un:false,bot:true},
+  {name:'Priya Classes',ini:'PC',time:'2 hr',preview:'Voice note · 0:12',owner:'Unassigned',unread:3,pending:true,mine:false,un:true},
+  {name:'Karan Mehta',ini:'KM',time:'Yesterday',preview:'You: Does 4 PM tomorrow work for the demo?',owner:'Gunjan',unread:0,pending:false,mine:false,un:false}
+];
+const LEADS = [
+  {name:'Neha Verma',phone:'+91 98XXX XX210',stage:'Interested',owner:'Gunjan',last:'What is the monthly price?',when:'2 min ago',next:'Tomorrow 11:00 AM',late:false,hot:true,mine:false},
+  {name:'Rohit Jain',phone:'+91 97XXX XX034',stage:'New lead',owner:'Ranjana',last:'Selected button: Chatbot',when:'9 min ago',next:'Today 4:00 PM',late:false,hot:true,mine:true},
+  {name:'Sunrise Realty',phone:'+91 99XXX XX871',stage:'New lead',owner:'—',last:'Sent a photo',when:'24 min ago',next:'Not set',late:true,hot:false,mine:false},
+  {name:'Karan Mehta',phone:'+91 98XXX XX552',stage:'Demo booked',owner:'Gunjan',last:'You: Demo at 4 PM tomorrow?',when:'Yesterday',next:'Tomorrow 4:00 PM',late:false,hot:true,mine:false},
+  {name:'Aman Gupta',phone:'+91 96XXX XX119',stage:'Interested',owner:'Ranjana',last:'Only the bot has replied',when:'1 hr ago',next:'Overdue by 2 days',late:true,hot:false,mine:true},
+  {name:'Meera Textiles',phone:'+91 93XXX XX640',stage:'Won',owner:'Abhinandan',last:'Payment done, thanks!',when:'3 days ago',next:'—',late:false,hot:false,mine:false}
+];
+const STAGE_PILL = {'New lead':'p-blue','Interested':'p-cyan','Demo booked':'p-warn','Won':'p-ok','Lost':'p-grey'};
+const VIEWS = [
+  {id:'all',label:'All leads',f:()=>true},{id:'mine',label:'My leads',f:l=>l.mine},
+  {id:'hot',label:'Hot',f:l=>l.hot},{id:'late',label:'Missed follow-up',f:l=>l.late}
+];
+const FOLLOW = [
+  {label:'Overdue',color:'var(--bad)',items:[{name:'Aman Gupta',when:'2 days ago',note:'Send the price list'},{name:'Sunrise Realty',when:'Yesterday',note:'Reply to the photo'}]},
+  {label:'Today',color:'var(--navy)',items:[{name:'Rohit Jain',when:'4:00 PM',note:'Chatbot demo'},{name:'Vaibhav Traders',when:'6:30 PM',note:'Quotation follow-up'},{name:'Harsh Enterprises',when:'7:15 PM',note:'Explain the plans'}]},
+  {label:'Tomorrow',color:'var(--slate)',items:[{name:'Neha Verma',when:'11:00 AM',note:'Share a demo slot'},{name:'Karan Mehta',when:'4:00 PM',note:'Demo call'}]}
+];
+const BROADCASTS = [
+  {name:'Webinar invite, 30 Nov',aud:'Tag: Interested in webinar · 37',status:'Scheduled',cls:'p-blue',note:'28 Nov, 11:00 AM',sent:'—',read:0,reply:0,readT:'—',replyT:'—',when:'28 Nov'},
+  {name:'Dussehra offer',aud:'Stage: Interested · 1,165',status:'Completed',cls:'p-ok',note:'',sent:'1,153',read:55,reply:6,readT:'55%',replyT:'6%',when:'20 Oct'},
+  {name:'Webinar 27 Oct',aud:'Tag: Old WhatsApp · 1,250',status:'Completed',cls:'p-ok',note:'',sent:'1,235',read:47,reply:4,readT:'47%',replyT:'4%',when:'25 Oct'},
+  {name:'Rent reminder',aud:'File upload · 392',status:'Mostly failed',cls:'p-bad',note:'378 numbers are not on WhatsApp',sent:'14',read:3,reply:0,readT:'3%',replyT:'0%',when:'13 Oct'}
+];
+const TEMPLATES = [
+  {name:'Webinar invite',cat:'Marketing',body:'Hi {{1}}! Join us for {{2}}. Seats are limited.',status:'Approved',note:'',lang:'English'},
+  {name:'Demo reminder',cat:'Utility',body:'Hi {{1}}, your demo is on {{2}}. Link: {{3}}',status:'Approved',note:'',lang:'English'},
+  {name:'Festive offer',cat:'Marketing',body:'Hi {{1}}, this Diwali get {{2}}. Reply now to claim it.',status:'In review',note:'Meta usually responds within 24 hours',lang:'English'},
+  {name:'Payment reminder',cat:'Utility',body:'Your bill of {{1}} is due on {{2}}.',status:'Rejected',note:'Reason: a template cannot start with a variable. Fix it',lang:'English'}
+];
+const AUD = [{id:'hot',label:'Tag: Hot lead',n:20},{id:'web',label:'Tag: Interested in webinar',n:37},{id:'int',label:'Stage: Interested',n:1165},{id:'all',label:'All contacts',n:14198}];
+const TPL = [
+  {name:'Webinar invite',cat:'Marketing',rate:0.86,short:'Webinar invite with a button',prev:'Hi Neha!\nJoin us for the WhatsApp Sales Webinar, 30 Nov, 3 PM. Seats are limited.\n\n[ Register now ]'},
+  {name:'Demo reminder',cat:'Utility',rate:0.13,short:'Reminder before a demo',prev:'Hi Neha,\nyour demo is tomorrow at 4 PM.\nLink: simplefloww.com/demo'}
+];
+const BOTS = [
+  {name:'Welcome message',status:'Live',cls:'p-ok',trigger:'First message from a new customer',stats:'Ran 124 times · 68% completed',warn:'',toggle:'Pause'},
+  {name:'Pricing info',status:'Live',cls:'p-ok',trigger:'Message contains "price", "rate" or "cost"',stats:'Ran 41 times',warn:'',toggle:'Pause'},
+  {name:'Webinar reminder',status:'Paused',cls:'p-warn',trigger:'Message contains "send info"',stats:'Ran 0 times',warn:'The webinar date (27 Oct) has passed, so this bot paused itself.',toggle:'Resume'},
+  {name:'Test bot',status:'Draft',cls:'p-grey',trigger:'Message contains "know more"',stats:'Not live yet',warn:'"know more" overlaps with the "Pricing info" bot. Change the trigger before going live.',toggle:'Go live'}
+];
+const SET = [
+  ['profile','Business profile','Name, logo, website, industry, timezone and business hours.'],
+  ['numbers','WhatsApp numbers','Connected numbers, their quality rating and display name.'],
+  ['team','Team & roles',''],
+  ['leadsetup','Lead setup','Stages, tags and custom fields in one place.'],
+  ['reminders','Reminders','How early follow-up alerts arrive, pop-ups and sound.'],
+  ['quick','Quick replies','Saved replies you send often. Type / in chat to use them.'],
+  ['media','Media library','Photos, PDFs and videos used in chats and campaigns.'],
+  ['optout','Opt-out','People who do not want messages, and the STOP keyword.'],
+  ['integrations','Integrations','Facebook Leads, IndiaMART, Google Sheets, Shopify.'],
+  ['api','API & webhooks','Keys and webhooks for developers.'],
+  ['billing','Billing & wallet','']
+];
+const ROLES = [
+  {name:'Owner',can:'Everything, including billing and team.',cannot:''},
+  {name:'Manager',can:'All team chats and leads, campaigns, reports.',cannot:'No billing or role changes.'},
+  {name:'Sales agent',can:'Only their own chats, leads and follow-ups.',cannot:'No export, delete or campaigns.'},
+  {name:'Viewer',can:'Can view only.',cannot:'Cannot change anything.'}
+];
+
+// ---------- pieces ----------
+function sidebar(){
+  const items = NAV.filter(n => owner() || n.agent);
+  const foot = [{id:'help',label:'Help & Videos'}].concat(owner() ? [{id:'settings',label:'Settings'}] : []);
+  const btn = n => {
+    const on = S.screen === n.id || (n.id === 'home' && S.screen === 'setup');
+    return `<button class="navbtn${on?' on':''}" data-act="nav" data-arg="${n.id}" ${on?'aria-current="page"':''}>${ic(n.id)}<span class="lab">${n.label}</span>${n.badge?`<span class="pill" style="background:var(--blue);color:#fff;padding:1px 8px">${n.badge}</span>`:''}</button>`;
+  };
+  return `<aside class="side">
+    <div class="h" style="font-size:20px;font-weight:800;letter-spacing:-.4px;padding:0 6px">Simple Floww<div style="font-family:var(--f-body);font-size:11.5px;font-weight:600;letter-spacing:1px;color:var(--blue)">BUSINESS PORTAL</div></div>
+    <div style="position:relative">
+      <button class="switch" data-act="switch" aria-expanded="${S.switchOpen}">${ic('swap',18)}<span style="flex:1;text-align:left">Switch App</span><span aria-hidden="true">▾</span></button>
+      ${S.switchOpen ? `<div class="pop" style="top:46px;left:0;right:0" role="menu">
+        <div style="font-size:12px;color:var(--slate);padding:6px 10px">Your apps</div>
+        <button class="navbtn on" role="menuitem" data-act="switch">${ic('check',18,2.4)}<span class="lab">Business Portal</span></button>
+        <button class="navbtn" role="menuitem" data-act="switch"><span style="width:20px"></span><span class="lab">[Other app name]</span></button>
+      </div>` : ''}
+    </div>
+    <nav class="navlist" aria-label="Main menu">
+      ${items.map(btn).join('')}
+      <div class="sep"></div>
+      ${foot.map(btn).join('')}
+    </nav>
+    <div class="side-user">
+      <span class="av" style="width:36px;height:36px">${owner()?'AK':'RA'}</span>
+      <div style="min-width:0"><div style="font-weight:600;font-size:14px">${owner()?'Abhinandan Kumar':'Ranjana'}</div><div class="muted" style="font-size:12.5px">${owner()?'Owner':'Sales agent'}</div></div><a href="/" style="margin-left:auto;font-size:12.5px;font-weight:600;color:var(--blue);text-decoration:none;white-space:nowrap">Log out</a>
+    </div>
+  </aside>`;
+}
+
+function topbar(){
+  return `<header class="top">
+    <label style="flex:1 1 240px;min-width:0;position:relative;display:block">
+      <span style="position:absolute;left:12px;top:11px;color:var(--slate)">${ic('search',18)}</span>
+      <input id="q" class="inp" style="padding-left:38px;background:var(--cloud);border-color:var(--cloud)" placeholder="Search name, number or message" aria-label="Search">
+    </label>
+    <div class="row" style="gap:4px;background:var(--cloud);border-radius:10px;padding:4px" role="group" aria-label="Preview as role">
+      <span class="muted" style="font-size:12.5px;padding:0 6px">View as</span>
+      <button class="btn${owner()?' chip on':''}" style="min-height:34px;${owner()?'':'border-color:transparent'}" data-act="role" data-arg="owner">Owner</button>
+      <button class="btn${!owner()?' chip on':''}" style="min-height:34px;${!owner()?'':'border-color:transparent'}" data-act="role" data-arg="agent">Sales agent</button>
+    </div>
+    <span class="pill p-cyan">Sample data</span>
+    ${owner() ? `<div class="wallet" title="Message wallet">${ic('wallet',18)}<span style="font-variant-numeric:tabular-nums">${money(BALANCE)}</span><button class="btn btn-p" data-act="recharge">Recharge</button></div>` : ''}
+    <button class="btn" aria-label="Notifications" style="width:40px;padding:0;position:relative">${ic('bell',19)}<span style="position:absolute;top:6px;right:7px;width:8px;height:8px;border-radius:999px;background:#e5484d"></span></button>
+    <span class="av" style="width:40px;height:40px" aria-label="Profile">${owner()?'AK':'RA'}</span>
+  </header>`;
+}
+
+// ---------- screens ----------
+function home(){
+  const done = STEPS.filter(s => S.done[s.id]).length;
+  const all = done === 7;
+  const first = owner() ? 'Abhinandan' : 'Ranjana';
+  const sub = owner() ? (all ? 'Here is what needs your attention today.' : `${7-done} setup steps left. Today's work is below.`) : 'Here is your work for today.';
+  const checklist = owner() && !all ? `<section class="card stack" style="padding:22px;gap:16px">
+    <div class="row" style="justify-content:space-between;gap:12px">
+      <div><h2 class="h" style="font-size:19px;font-weight:700">Finish your setup</h2><p class="muted" style="margin:2px 0 0;font-size:14px">Every step has a 1–2 minute video. If you get stuck, click "Do it with AI".</p></div>
+      <div class="row" style="gap:12px;min-width:200px;flex:0 1 260px"><div class="bar" style="flex:1"><i style="width:${Math.round(done/7*100)}%;background:linear-gradient(135deg,#0a1ef5 0%,#06d6fa 100%)"></i></div><strong style="font-variant-numeric:tabular-nums">${done}/7</strong></div>
+    </div>
+    <div class="stack" style="gap:8px">${STEPS.map((s,i)=>{const d=S.done[s.id];return `
+      <div class="row" style="gap:14px;padding:12px 14px;border-radius:12px;${d?'background:#f8faff':'background:#fff;border:1px solid var(--line2)'}">
+        <span style="width:30px;height:30px;border-radius:999px;display:flex;align-items:center;justify-content:center;flex:0 0 30px;${d?'background:var(--green);color:var(--navy)':'background:var(--tint-blue);color:var(--blue)'}">${d?ic('check',16,2.6):`<span style="font-size:13px;font-weight:700">${i+1}</span>`}</span>
+        <div style="flex:1 1 220px;min-width:0"><div style="font-weight:600;${d?'color:var(--slate);text-decoration:line-through':''}">${s.title}</div><div class="muted" style="font-size:13px">${s.sub}</div></div>
+        ${d?'<span class="pill p-ok">Done</span>':`<div class="row" style="gap:6px">
+          <button class="btn btn-q" data-act="video" data-arg="${i}">${ic('help',16)}Video ${s.dur}</button>
+          <button class="btn" data-act="ai-done" data-arg="${s.id}">${ic('spark',16)}Do it with AI</button>
+          <button class="btn btn-p" data-act="${s.act}">${s.cta}</button></div>`}
+      </div>`}).join('')}</div>
+  </section>` : (owner() ? `<div class="card row" style="padding:14px 18px;gap:12px;background:var(--ok-bg);border-color:#c4eed3;color:var(--ok);font-weight:600">${ic('check',20,2.4)}Setup complete. This page will now show your daily work.</div>` : '');
+  const cards = [
+    {label:'Awaiting reply',num:'5',sub:'Customers wrote and nobody has replied',cta:'Reply now',act:'go-pending',color:'#b25e00'},
+    {label:'Follow-ups today',num:'3',sub:'Plus 2 overdue',cta:'View',act:'go-followups',color:'var(--navy)'},
+    {label:'New leads today',num:'6',sub:'4 are not assigned yet',cta:'Assign',act:'go-leads',color:'var(--navy)'}
+  ];
+  const pend = CHATS.filter(c=>c.pending).slice(0,4);
+  return `<div class="stack" style="gap:24px">
+    <div><h1 class="h" style="font-size:28px">Welcome, ${first}</h1><p class="muted" style="margin:4px 0 0">${sub}</p></div>
+    ${checklist}
+    <section class="stack" style="gap:12px">
+      <h2 class="h" style="font-size:19px;font-weight:700">Today</h2>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">${cards.map(c=>`
+        <button class="card stack" style="padding:18px;text-align:left;gap:6px" data-act="${c.act}">
+          <span class="muted" style="font-size:13px;font-weight:600">${c.label}</span>
+          <span class="h" style="font-size:32px;font-weight:800;color:${c.color}">${c.num}</span>
+          <span class="muted" style="font-size:13.5px">${c.sub}</span>
+          <span style="font-size:13.5px;font-weight:600;color:var(--blue);margin-top:4px">${c.cta} →</span>
+        </button>`).join('')}</div>
+    </section>
+    <section class="card" style="overflow:hidden">
+      <div class="row" style="padding:16px 18px;justify-content:space-between;border-bottom:1px solid var(--line2)"><h2 class="h" style="font-size:17px;font-weight:700">Waiting for your reply</h2><button class="btn btn-q" data-act="nav" data-arg="inbox">Open inbox</button></div>
+      ${pend.map(c=>`<button class="row" style="width:100%;border:0;background:#fff;border-bottom:1px solid var(--line2);padding:12px 18px;gap:12px;text-align:left;flex-wrap:nowrap" data-act="go-pending">
+        <span class="av" style="width:38px;height:38px">${c.ini}</span>
+        <span style="flex:1;min-width:0"><span style="display:block;font-weight:600">${c.name}</span><span class="muted" style="display:block;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.bot?'Only the bot replied · ':''}${c.preview}</span></span>
+        <span class="pill p-warn">Waiting ${c.time}</span></button>`).join('')}
+    </section>
+  </div>`;
+}
+
+function setup(){
+  const first = 'Abhinandan';
+  const log = [{ai:1,t:`Hi ${first}! I will set everything up in about 3 minutes. What kind of business do you run?`}];
+  if (S.biz) log.push({t:S.biz},{ai:1,t:'Great. Where do most of your customers come from?'});
+  if (S.source) log.push({t:S.source},{ai:1,t:'How many people on your team will talk to customers on WhatsApp?'});
+  if (S.team) log.push({t:S.team},{ai:1,t:'Thanks! I have prepared everything for your business. Take a look. You can change any of it later.'});
+  if (S.planApplied) log.push({t:'Looks good, apply it'},{ai:1,t:'Done. Now connect your WhatsApp number. You need to do this step yourself, and I will guide you.'});
+  if (S.waConnected) log.push({ai:1,t:'Number connected: +91 90XXX XX359. Let us send a test message.'});
+  if (S.testSent) log.push({ai:1,t:'Test message sent. It should be on your phone now. Your account is live!'});
+  let chips = [], key = '';
+  if (!S.biz){chips = Object.keys(BIZ); key='biz';}
+  else if (!S.source){chips = SOURCES; key='source';}
+  else if (!S.team){chips = TEAMS; key='team';}
+  const p = BIZ[S.biz] || BIZ['Agency / Service'];
+  const panel = (inner) => `<div class="stack" style="margin-left:42px;border:1px solid var(--line);border-radius:14px;padding:18px;gap:12px;background:#fbfcff">${inner}</div>`;
+  return `<div class="stack" style="gap:18px;max-width:760px">
+    <div><button class="btn btn-q" data-act="nav" data-arg="home">← Home</button></div>
+    <div><h1 class="h">Set up with AI</h1><p class="muted" style="margin:4px 0 0">Answer 3 questions and AI prepares everything for your business. You can change anything later.</p></div>
+    <div class="card stack" style="padding:20px;gap:14px">
+      ${log.map(m=>m.ai
+        ? `<div class="row" style="gap:10px;align-items:flex-start;flex-wrap:nowrap"><span class="av" style="width:32px;height:32px">${ic('spark',16)}</span><div style="background:var(--cloud);border-radius:4px 14px 14px 14px;padding:10px 14px;max-width:560px">${m.t}</div></div>`
+        : `<div class="row" style="justify-content:flex-end"><div style="background:var(--blue);color:#fff;border-radius:14px 4px 14px 14px;padding:10px 14px;max-width:420px;font-weight:500">${m.t}</div></div>`).join('')}
+      ${chips.length ? `<div class="row" style="padding-left:42px">${chips.map(c=>`<button class="chip" data-act="answer" data-key="${key}" data-arg="${c}">${c}</button>`).join('')}</div>` : ''}
+      ${S.team && !S.planApplied ? panel(`
+        <h3 class="h" style="font-size:16px;font-weight:700">Here is what is ready for you</h3>
+        <div><div class="lbl">Lead stages</div><div class="row" style="gap:6px">${p.stages.map(s=>`<span class="pill p-blue" style="font-size:13px;padding:5px 12px">${s}</span>`).join('<span class="muted">→</span>')}</div></div>
+        <div><div class="lbl">Tags</div><div class="row" style="gap:6px">${p.tags.map(t=>`<span class="pill" style="background:var(--cloud);border:1px solid var(--line);font-size:13px;padding:4px 12px">${t}</span>`).join('')}</div></div>
+        <div><div class="lbl">Welcome message (sent automatically to new customers)</div><div style="background:#d9fdd3;border-radius:12px;padding:10px 14px;max-width:460px;font-size:14px">Hi! Thanks for reaching out. What are you looking for? We will reply within 10 minutes.</div></div>
+        <div><div class="lbl">Templates (sent to Meta for approval)</div><div class="muted" style="font-size:14px">${p.tpl}</div></div>
+        <div class="row"><button class="btn btn-p" data-act="apply-plan">Looks good, apply it</button><button class="btn" data-act="restart">Start over</button></div>`) : ''}
+      ${S.planApplied && !S.waConnected ? panel(`
+        <h3 class="h" style="font-size:16px;font-weight:700">Connect your WhatsApp number</h3>
+        <p class="muted" style="margin:0;font-size:14px">You need to do this step yourself. A Facebook window will open where you choose your business and number. It takes about 3 minutes.</p>
+        <div class="note-warn"><strong>Note:</strong> if this number is currently used in the WhatsApp app, you must delete it from the app first. The video shows how.</div>
+        <div class="row"><button class="btn btn-p" data-act="connect">Connect WhatsApp with Facebook</button><button class="btn btn-q" data-act="video" data-arg="0">Watch video (1:30)</button></div>`) : ''}
+      ${S.waConnected && !S.testSent ? panel(`
+        <h3 class="h" style="font-size:16px;font-weight:700">Test on your phone</h3>
+        <p class="muted" style="margin:0;font-size:14px">We will send a test message to your number. Once it arrives, your account is live.</p>
+        <label style="max-width:320px"><span class="lbl">Your mobile number</span><input id="testnum" class="inp" value="+91 98XXX XXXXX"></label>
+        <div><button class="btn btn-g" data-act="send-test">Send test message</button></div>`) : ''}
+      ${S.testSent ? `<div style="margin-left:42px"><button class="btn btn-p" data-act="nav" data-arg="home">Go to Home</button></div>` : ''}
+    </div>
+  </div>`;
+}
+
+function inbox(){
+  const tabs = [
+    {id:'unread',label:'Unread',f:c=>c.unread>0},{id:'mine',label:'My chats',f:c=>c.mine},
+    {id:'unassigned',label:'Unassigned',f:c=>c.un},{id:'pending',label:'Awaiting reply',f:c=>c.pending},{id:'all',label:'All',f:()=>true}
+  ].filter(t => owner() || t.id !== 'unassigned');
+  const cur = tabs.find(t=>t.id===S.inboxTab) || tabs[0];
+  const list = CHATS.filter(cur.f);
+  return `<div class="stack" style="gap:14px">
+    <h1 class="h">Inbox</h1>
+    <div class="row">${tabs.map(t=>{const on=t.id===cur.id;return `<button class="btn${on?' chip on':''}" data-act="itab" data-arg="${t.id}">${t.label} <span style="border-radius:999px;padding:0 7px;font-size:12px;${on?'background:rgba(255,255,255,.2)':'background:var(--tint-blue);color:var(--blue)'}">${CHATS.filter(t.f).length}</span></button>`}).join('')}</div>
+    <div class="split">
+      <div class="card" style="flex:0 1 330px;min-width:0;overflow:hidden">
+        ${list.map((c,i)=>`<button style="width:100%;border:0;border-bottom:1px solid var(--line2);padding:12px 14px;display:flex;gap:12px;text-align:left;align-items:flex-start;background:${i===S.activeChat?'var(--cloud)':'#fff'}" data-act="chat" data-arg="${i}">
+          <span class="av" style="width:40px;height:40px">${c.ini}</span>
+          <span class="stack" style="flex:1;min-width:0;gap:2px">
+            <span class="row" style="justify-content:space-between;flex-wrap:nowrap"><span style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</span><span class="muted" style="font-size:12px;white-space:nowrap">${c.time}</span></span>
+            <span class="row" style="gap:6px;font-size:13.5px;flex-wrap:nowrap">${c.bot?'<span class="pill p-cyan" style="padding:0 7px;font-size:11px">Bot</span>':''}<span class="muted" style="flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.preview}</span>${c.unread?`<span class="pill" style="background:var(--blue);color:#fff;padding:0 7px">${c.unread}</span>`:''}</span>
+            <span class="row" style="gap:6px"><span class="pill" style="background:var(--cloud);color:var(--slate);font-weight:500;padding:1px 8px">${c.owner}</span>${c.pending?'<span class="pill p-warn" style="padding:1px 8px">Awaiting reply</span>':''}</span>
+          </span></button>`).join('') || '<p class="muted" style="padding:18px;margin:0">No chats in this tab.</p>'}
+      </div>
+      <div class="card stack" style="flex:1 1 380px;min-width:0;overflow:hidden">
+        <div class="row" style="padding:14px 18px;border-bottom:1px solid var(--line2);justify-content:space-between">
+          <div><div style="font-weight:700;font-size:15.5px">Neha Verma</div><div class="muted" style="font-size:13px">+91 98XXX XX210 · From a Facebook ad</div></div>
+          <span class="pill p-ok">Free reply window: 23 hours left</span>
+        </div>
+        <div class="stack" style="flex:1;padding:18px;gap:12px;background:#f6f8fc">
+          <div style="align-self:flex-end;max-width:82%;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 14px"><span class="pill p-cyan" style="padding:0 8px;font-size:11px;margin-bottom:4px">Bot</span><div>What would you like to use Simple Floww for?</div><div class="row" style="gap:6px;margin-top:8px"><span class="pill" style="border:1px solid #cfd7f0;color:var(--blue);font-weight:500">Bulk Messaging</span><span class="pill" style="border:1px solid #cfd7f0;color:var(--blue);font-weight:500">Chatbot</span><span class="pill" style="border:1px solid #cfd7f0;color:var(--blue);font-weight:500">CRM</span></div></div>
+          <div style="align-self:flex-start;max-width:82%;background:#fff;border-radius:14px;padding:10px 14px;box-shadow:0 1px 0 var(--line)"><div style="font-size:12px;color:var(--slate);border-left:3px solid #cfd7f0;padding-left:8px;margin-bottom:6px">Replied to: "What would you like to use Simple Floww for?"</div><div style="font-weight:600">Selected button: Bulk Messaging</div></div>
+          <div style="align-self:flex-end;max-width:82%;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 14px"><span class="pill p-cyan" style="padding:0 8px;font-size:11px;margin-bottom:4px">Bot</span><div>Thank you! Our team will contact you shortly.</div></div>
+          <div style="align-self:flex-start;max-width:82%;background:#fff;border-radius:14px;padding:10px 14px;box-shadow:0 1px 0 var(--line)"><div>What is the monthly price? Can I get a demo?</div><div class="muted" style="font-size:12px;text-align:right">2 min ago</div></div>
+          <div style="align-self:center;background:var(--warn-bg);color:#5c3200;border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600;text-align:center">The customer is waiting. No team member has replied yet.</div>
+        </div>
+        <div class="row" style="padding:12px;border-top:1px solid var(--line2);flex-wrap:nowrap">
+          <button class="btn" aria-label="Add photo, template or quick reply" style="width:42px;padding:0;flex:0 0 42px">${ic('plus',18,2)}</button>
+          <input class="inp" style="flex:1;min-width:0" placeholder="Type a message, or / for quick replies" aria-label="Message">
+          <button class="btn btn-p" aria-label="Send" style="width:42px;padding:0;flex:0 0 42px">${ic('send',18,2)}</button>
+        </div>
+      </div>
+      <div class="card stack" style="flex:0 1 270px;min-width:0;padding:18px;gap:14px">
+        <h3 class="h" style="font-size:15px;font-weight:700">Lead details</h3>
+        <label><span class="lbl">Stage</span><select class="inp"><option>New lead</option><option selected>Interested</option><option>Demo booked</option><option>Won</option><option>Lost</option></select></label>
+        <label><span class="lbl">Assigned to</span><select class="inp"><option>Gunjan</option><option>Ranjana</option><option>Abhinandan</option></select></label>
+        <div><span class="lbl">Next follow-up</span><div class="row" style="justify-content:space-between"><span>Tomorrow, 11:00 AM</span><button class="btn btn-q">Change</button></div></div>
+        <div><span class="lbl">Tags</span><div class="row" style="gap:6px"><span class="pill" style="background:var(--cloud);border:1px solid var(--line)">Bulk messaging</span><span class="pill" style="background:var(--cloud);border:1px solid var(--line)">Hot lead</span></div></div>
+        <label><span class="lbl">Note</span><textarea class="inp" style="min-height:72px;resize:vertical">Asked about pricing. Share a demo slot tomorrow.</textarea></label>
+      </div>
+    </div>
+  </div>`;
+}
+
+function leads(){
+  const cur = VIEWS.find(v=>v.id===S.leadFilter) || VIEWS[0];
+  const base = owner() ? LEADS : LEADS.filter(l=>l.mine);
+  const vis = base.filter(cur.f);
+  const table = `<div class="card tblwrap"><table class="tbl"><thead><tr><th>Name</th><th>Stage</th><th>Assigned to</th><th>Last message</th><th>Next follow-up</th></tr></thead><tbody>
+    ${vis.map(l=>`<tr><td style="white-space:nowrap"><div style="font-weight:600">${l.name}</div><div class="muted" style="font-size:12.5px">${l.phone}</div></td>
+      <td><span class="pill ${STAGE_PILL[l.stage]}">${l.stage}</span></td><td style="white-space:nowrap">${l.owner}</td>
+      <td style="min-width:220px"><div>${l.last}</div><div class="muted" style="font-size:12.5px">${l.when}</div></td>
+      <td style="white-space:nowrap;${l.late?'color:var(--bad);font-weight:600':''}">${l.next}</td></tr>`).join('') || '<tr><td colspan="5" class="muted">No leads in this view.</td></tr>'}
+  </tbody></table></div>`;
+  const board = `<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">${['New lead','Interested','Demo booked','Won'].map(c=>{const cs=vis.filter(l=>l.stage===c);return `
+    <div class="stack" style="background:#eef2fb;border-radius:14px;padding:12px;gap:8px">
+      <div class="row" style="justify-content:space-between"><strong style="font-size:14px">${c}</strong><span class="muted" style="font-size:13px">${cs.length}</span></div>
+      ${cs.map(l=>`<div class="card stack" style="padding:12px;gap:4px;border-radius:12px"><div style="font-weight:600">${l.name}</div><div class="muted" style="font-size:13px">${l.last}</div><div class="row" style="justify-content:space-between;font-size:12.5px;margin-top:4px"><span style="${l.late?'color:var(--bad);font-weight:600':'color:var(--slate)'}">${l.late?'Missed follow-up':l.when}</span><span class="muted">${l.owner}</span></div></div>`).join('')}
+    </div>`}).join('')}</div>`;
+  return `<div class="stack" style="gap:14px">
+    <div class="row" style="justify-content:space-between;gap:12px"><h1 class="h">Leads</h1>
+      <div class="row"><div class="seg" role="group" aria-label="View"><button class="btn${S.leadsView==='list'?' on':''}" data-act="lview" data-arg="list">List</button><button class="btn${S.leadsView==='board'?' on':''}" data-act="lview" data-arg="board">Board</button></div>
+      ${owner()?'<button class="btn">Import</button>':''}<button class="btn btn-p">+ New lead</button></div></div>
+    <div class="row">${VIEWS.map(v=>`<button class="chip${v.id===cur.id?' on':''}" data-act="lfilter" data-arg="${v.id}">${v.label} · ${base.filter(v.f).length}</button>`).join('')}</div>
+    ${S.leadsView==='list'?table:board}
+  </div>`;
+}
+
+function followups(){
+  return `<div class="stack" style="gap:14px;max-width:860px"><h1 class="h">Follow-ups</h1>
+    ${FOLLOW.map(g=>`<section class="stack" style="gap:8px"><h2 class="h" style="font-size:16px;font-weight:700;color:${g.color}">${g.label} · ${g.items.length}</h2>
+      ${g.items.map(f=>`<div class="card row" style="padding:12px 16px;gap:12px"><div style="flex:1 1 240px;min-width:0"><div style="font-weight:600">${f.name} <span class="muted" style="font-weight:400">· ${f.when}</span></div><div class="muted" style="font-size:13.5px">${f.note}</div></div>
+        <div class="row" style="gap:6px"><button class="btn">Call</button><button class="btn" data-act="nav" data-arg="inbox">Chat</button><button class="btn btn-p">Mark done</button></div></div>`).join('')}</section>`).join('')}
+  </div>`;
+}
+
+const tabsHtml = (list, cur, act) => `<div class="tabs" role="tablist">${list.map(([id,l])=>`<button class="tab${cur===id?' on':''}" role="tab" aria-selected="${cur===id}" data-act="${act}" data-arg="${id}">${l}</button>`).join('')}</div>`;
+
+function campaigns(){
+  if (S.wizard) return wizard();
+  let body = '';
+  if (S.campTab==='broadcasts') body = `<div class="card tblwrap"><table class="tbl"><thead><tr><th>Campaign</th><th>Status</th><th>Sent</th><th>Read</th><th>Replied</th><th>Date</th></tr></thead><tbody>
+    ${BROADCASTS.map(b=>`<tr><td style="white-space:nowrap"><div style="font-weight:600">${b.name}</div><div class="muted" style="font-size:12.5px">${b.aud}</div></td>
+      <td><span class="pill ${b.cls}">${b.status}</span>${b.note?`<div class="muted" style="font-size:12px;margin-top:4px">${b.note}</div>`:''}</td>
+      <td style="font-variant-numeric:tabular-nums">${b.sent}</td>
+      <td style="min-width:120px"><div class="bar"><i style="width:${b.read}%;background:var(--blue)"></i></div><span class="muted" style="font-size:12.5px">${b.readT}</span></td>
+      <td style="min-width:120px"><div class="bar"><i style="width:${b.reply}%;background:var(--green)"></i></div><span class="muted" style="font-size:12.5px">${b.replyT}</span></td>
+      <td style="white-space:nowrap">${b.when}</td></tr>`).join('')}</tbody></table></div>`;
+  if (S.campTab==='templates') body = `<div class="stack" style="gap:10px"><div class="row" style="justify-content:flex-end"><button class="btn">${ic('spark',16)}Write with AI</button><button class="btn btn-p">+ New template</button></div>
+    <div class="card tblwrap"><table class="tbl"><thead><tr><th>Template</th><th>Category</th><th>Status</th><th>Language</th></tr></thead><tbody>
+    ${TEMPLATES.map(t=>`<tr><td><div style="font-weight:600">${t.name}</div><div class="muted" style="font-size:12.5px;max-width:420px">${t.body}</div></td>
+      <td><span class="pill ${t.cat==='Marketing'?'p-blue':'p-cyan'}">${t.cat}</span></td>
+      <td><span class="pill ${t.status==='Approved'?'p-ok':t.status==='Rejected'?'p-bad':'p-warn'}">${t.status}</span>${t.note?`<div class="muted" style="font-size:12px;margin-top:4px">${t.note}</div>`:''}</td><td>${t.lang}</td></tr>`).join('')}</tbody></table></div></div>`;
+  if (S.campTab==='reports') body = `<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">${[['Sent this month','2,412'],['Read','53%'],['Replied','6.1%'],['Spent','₹2,074']].map(([a,b])=>`<div class="card" style="padding:18px"><div class="muted" style="font-size:13px;font-weight:600">${a}</div><div class="h" style="font-size:28px;font-weight:800">${b}</div></div>`).join('')}</div>`;
+  return `<div class="stack" style="gap:16px">
+    <div class="row" style="justify-content:space-between;gap:12px"><h1 class="h">Campaigns</h1><button class="btn btn-p" data-act="wiz-start">+ New campaign</button></div>
+    ${tabsHtml([['broadcasts','Broadcasts'],['templates','Templates'],['reports','Reports']], S.campTab, 'ctab')}
+    ${body}
+  </div>`;
+}
+
+function wizard(){
+  const aud = AUD.find(a=>a.id===S.aud), tpl = TPL[S.tpl];
+  const cost = aud.n * tpl.rate, low = cost > BALANCE;
+  const labels = ['Audience','Message','Details','Schedule','Review'];
+  let body = '';
+  if (S.wstep===1) body = `<h2 class="h" style="font-size:18px;font-weight:700">Who should get this?</h2><p class="muted" style="margin:0;font-size:14px">Pick a tag, a stage or your full list. You will see how many people it reaches.</p>
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px">${AUD.map(a=>`<button class="box${S.aud===a.id?' on':''}" data-act="aud" data-arg="${a.id}"><span style="font-weight:600;display:block">${a.label}</span><span class="muted" style="font-size:13px">${nf(a.n)} people</span></button>`).join('')}</div>
+    ${S.aud==='all'?'<div class="note-warn">Your full list includes old and inactive numbers. Many failures can lower your number\'s quality rating with Meta. Start with a smaller group.</div>':''}`;
+  if (S.wstep===2) body = `<h2 class="h" style="font-size:18px;font-weight:700">Which message?</h2><p class="muted" style="margin:0;font-size:14px">Only approved templates are shown.</p>
+    <div class="split" style="gap:16px"><div class="stack" style="flex:1 1 300px;gap:8px;min-width:0">${TPL.map((t,i)=>`<button class="box${S.tpl===i?' on':''}" data-act="tpl" data-arg="${i}"><span class="row" style="justify-content:space-between;flex-wrap:nowrap"><strong>${t.name}</strong><span class="pill ${t.cat==='Marketing'?'p-blue':'p-cyan'}">${t.cat}</span></span><span class="muted" style="font-size:13px;display:block;margin-top:4px">${t.short}</span></button>`).join('')}</div>
+    <div style="flex:0 1 300px;background:#efe9e1;border-radius:18px;padding:16px;min-width:0"><div style="font-size:12px;color:var(--slate);margin-bottom:8px">Customer preview</div><div style="background:#fff;border-radius:12px;padding:12px;font-size:14px;white-space:pre-line">${tpl.prev}</div></div></div>`;
+  if (S.wstep===3) body = `<h2 class="h" style="font-size:18px;font-weight:700">Fill in the message details</h2><div class="stack" style="gap:12px;max-width:520px">
+    <label><span class="lbl">Customer name <span class="muted" style="font-weight:400">({{1}})</span></span><select class="inp"><option>Contact name (automatic)</option><option>Type a fixed value</option></select></label>
+    <label><span class="lbl">Offer or event <span class="muted" style="font-weight:400">({{2}})</span></span><input class="inp" value="WhatsApp Sales Webinar, 30 Nov, 3 PM"></label>
+    <label><span class="lbl">Button link</span><input class="inp" value="https://simplefloww.com/webinar"></label></div>`;
+  if (S.wstep===4) body = `<h2 class="h" style="font-size:18px;font-weight:700">When should it go out?</h2>
+    <div class="row" style="gap:10px"><button class="box${S.when==='now'?' on':''}" style="width:auto;min-width:200px" data-act="when" data-arg="now"><strong style="display:block">Now</strong><span class="muted" style="font-size:13px">Right after review</span></button>
+    <button class="box${S.when==='later'?' on':''}" style="width:auto;min-width:200px" data-act="when" data-arg="later"><strong style="display:block">Later</strong><span class="muted" style="font-size:13px">Pick a date and time</span></button></div>
+    ${S.when==='later'?'<label style="max-width:300px"><span class="lbl">Date and time</span><input class="inp" value="28 Nov 2026, 11:00 AM"></label>':''}`;
+  if (S.wstep===5) body = `<h2 class="h" style="font-size:18px;font-weight:700">Review before sending</h2>
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">
+      ${[['Audience',aud.label,nf(aud.n)+' people'],['Message',tpl.name,tpl.cat+' template'],['Schedule',S.when==='now'?'Now':'28 Nov 2026, 11:00 AM',''],['Estimated cost',money(cost),tpl.cat+': ₹'+tpl.rate+' per message (example rate)']].map(([a,b,c])=>`<div style="background:var(--cloud);border-radius:12px;padding:14px"><div class="muted" style="font-size:12.5px;font-weight:600">${a}</div><div style="font-weight:700">${b}</div>${c?`<div class="muted" style="font-size:13px">${c}</div>`:''}</div>`).join('')}
+    </div>
+    ${low && !S.campSent ? `<div class="row" style="background:var(--bad-bg);color:#7a1520;border-radius:10px;padding:12px 14px;justify-content:space-between"><span style="font-size:14px">Your wallet has <strong>${money(BALANCE)}</strong>. You need <strong>${money(cost-BALANCE)}</strong> more for this campaign.</span><button class="btn btn-p" data-act="recharge">Recharge</button></div>` : ''}
+    ${S.campSent ? '<div style="background:var(--ok-bg);color:var(--ok);border-radius:10px;padding:12px 14px;font-weight:600">Campaign started. Results will appear under Broadcasts.</div>' : ''}`;
+  return `<div class="stack" style="gap:18px;max-width:900px">
+    <div><button class="btn btn-q" data-act="wiz-close">← Campaigns</button></div>
+    <h1 class="h">New campaign</h1>
+    <ol class="row" style="list-style:none;margin:0;padding:0;gap:6px">${labels.map((l,i)=>{const n=i+1,cur=n===S.wstep,past=n<S.wstep;return `<li class="row" style="gap:8px;padding:6px 12px 6px 6px;border-radius:999px;font-size:13.5px;font-weight:600;${cur?'background:var(--tint-blue);color:var(--blue)':past?'color:var(--ok)':'color:var(--slate)'}" ${cur?'aria-current="step"':''}><span style="width:24px;height:24px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;${cur?'background:var(--blue);color:#fff':past?'background:var(--green);color:var(--navy)':'background:#eef2fb;color:var(--slate)'}">${past?'✓':n}</span>${l}</li>`}).join('')}</ol>
+    <div class="card stack" style="padding:22px;gap:16px">
+      ${body}
+      <div class="row" style="justify-content:space-between;border-top:1px solid var(--line2);padding-top:16px">
+        <button class="btn" data-act="wiz-back">${S.wstep===1?'Cancel':'Back'}</button>
+        ${S.wstep<5?'<button class="btn btn-p" data-act="wiz-next">Next</button>':''}
+        ${S.wstep===5 && !low && !S.campSent ? `<button class="btn btn-g" data-act="wiz-send">${S.when==='now'?'Send now':'Schedule'}: ${nf(aud.n)} people, ${money(cost)}</button>` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function automations(){
+  let body = '';
+  if (S.autoTab==='bots') body = `<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">${BOTS.map(b=>`<div class="card stack" style="padding:18px;gap:10px">
+    <div class="row" style="justify-content:space-between;flex-wrap:nowrap"><strong style="font-size:15.5px">${b.name}</strong><span class="pill ${b.cls}">${b.status}</span></div>
+    <div style="font-size:13.5px"><span class="muted">Runs when:</span> ${b.trigger}</div>
+    <div style="font-size:13.5px"><span class="muted">This week:</span> ${b.stats}</div>
+    ${b.warn?`<div class="note-warn" style="font-size:13px;padding:8px 12px">${b.warn}</div>`:''}
+    <div class="row" style="gap:6px;margin-top:auto"><button class="btn">Open</button><button class="btn">${b.toggle}</button></div></div>`).join('')}</div>`;
+  if (S.autoTab==='agent') body = `<div class="card stack" style="padding:20px;gap:14px;max-width:720px">
+    <div class="row" style="justify-content:space-between"><h2 class="h" style="font-size:18px;font-weight:700">Website sales assistant</h2><span class="pill p-warn">Setup incomplete</span></div>
+    <p class="muted" style="margin:0;font-size:14px">Chats with website visitors, answers their questions and creates leads.</p>
+    ${[['Running on your website','<span class="pill p-ok">Yes</span>'],['New leads go to the CRM','<button class="btn btn-p" style="min-height:34px">Connect</button>'],['Plans and FAQ (knowledge base)','<button class="btn btn-p" style="min-height:34px">Upload file</button>'],['Also reply on WhatsApp','<button class="btn" style="min-height:34px">Turn on</button>']].map(([a,b])=>`<div class="row" style="justify-content:space-between;padding:10px 12px;background:var(--cloud);border-radius:10px"><span>${a}</span>${b}</div>`).join('')}
+  </div>`;
+  if (S.autoTab==='assign') body = `<div class="card stack" style="padding:20px;gap:14px;max-width:720px">
+    <h2 class="h" style="font-size:18px;font-weight:700">Assign new leads automatically</h2>
+    <label><span class="lbl">Method</span><select class="inp"><option>Round robin (one by one)</option><option>Whoever has the fewest leads</option></select></label>
+    <label><span class="lbl">Team members</span><input class="inp" value="Gunjan, Ranjana, Sachin"></label>
+    <label><span class="lbl">WhatsApp number</span><select class="inp"><option>All WhatsApp numbers</option><option>Only +91 90XXX XX359</option></select></label>
+    <label class="row" style="gap:10px;flex-wrap:nowrap"><input type="checkbox" checked style="width:18px;height:18px"><span>Do not reassign leads that already have an owner</span></label>
+    <label class="row" style="gap:10px;flex-wrap:nowrap"><input type="checkbox" checked style="width:18px;height:18px"><span>Skip people who are on leave or offline</span></label>
+    <div><button class="btn btn-p">Save</button></div></div>`;
+  return `<div class="stack" style="gap:16px">
+    <div class="row" style="justify-content:space-between;gap:12px"><h1 class="h">Automations</h1><button class="btn btn-p">+ New chatbot</button></div>
+    ${tabsHtml([['bots','Chatbots'],['agent','AI Agent'],['assign','Lead assignment']], S.autoTab, 'atab')}
+    ${body}</div>`;
+}
+
+function reports(){
+  return `<div class="stack" style="gap:16px">
+    <div class="row" style="justify-content:space-between;gap:12px"><h1 class="h">Reports</h1><select class="inp" style="width:auto"><option>This month (1–14 Nov)</option><option>Today</option><option>Last 7 days</option></select></div>
+    <p class="muted" style="margin:0;font-size:14px">Every number on this page uses the date range above and is counted the same way everywhere.</p>
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">${[['New leads','84',''],['Deals won','14',''],['Average first reply','18 min',''],['Awaiting reply','5','#b25e00']].map(([a,b,c])=>`<div class="card" style="padding:18px"><div class="muted" style="font-size:13px;font-weight:600">${a}</div><div class="h" style="font-size:28px;font-weight:800;${c?'color:'+c:''}">${b}</div></div>`).join('')}</div>
+    <div class="card tblwrap"><table class="tbl"><thead><tr><th>Team member</th><th>Leads</th><th>Contacted</th><th>Demos</th><th>Deals won</th><th>Missed follow-ups</th></tr></thead><tbody>
+      <tr><td style="font-weight:600">Gunjan</td><td>38</td><td>31</td><td>9</td><td>5</td><td style="color:#b25e00;font-weight:600">4</td></tr>
+      <tr><td style="font-weight:600">Ranjana</td><td>35</td><td>22</td><td>6</td><td>3</td><td style="color:var(--bad);font-weight:600">11</td></tr>
+      <tr><td style="font-weight:600">Sachin</td><td>11</td><td>10</td><td>3</td><td>2</td><td>0</td></tr>
+    </tbody></table></div></div>`;
+}
+
+// ---------- help center data ----------
+const KB_CATS = [
+  {id:'start',name:'Getting started',desc:'Account, setup checklist, first steps',icon:'home'},
+  {id:'wa',name:'WhatsApp setup',desc:'Connect numbers, display name, quality rating',icon:'inbox'},
+  {id:'inbox',name:'Inbox & chats',desc:'Replies, quick replies, 24-hour window',icon:'inbox'},
+  {id:'leads',name:'Leads & follow-ups',desc:'Import, stages, tags, reminders',icon:'leads'},
+  {id:'camp',name:'Campaigns & templates',desc:'Templates, approvals, broadcasts',icon:'campaigns'},
+  {id:'bots',name:'Chatbots & AI',desc:'Flows, triggers, AI agent',icon:'automations'},
+  {id:'billing',name:'Billing & wallet',desc:'Recharge, invoices, message charges',icon:'wallet'},
+  {id:'team',name:'Team & roles',desc:'Invite members, permissions',icon:'leads'},
+  {id:'fix',name:'Troubleshooting',desc:'Failed messages, login, common errors',icon:'help'}
+];
+const VIDEOS = [
+  {id:'v1',cat:'wa',t:'Connect your WhatsApp number',d:'1:30',setup:1},
+  {id:'v2',cat:'start',t:'Set up your account with AI',d:'1:10',setup:1},
+  {id:'v3',cat:'bots',t:'Turn on the welcome message',d:'0:50',setup:1},
+  {id:'v4',cat:'start',t:'Send a test message to your phone',d:'0:40',setup:1},
+  {id:'v5',cat:'camp',t:'Get your first template approved',d:'1:20',setup:1},
+  {id:'v6',cat:'leads',t:'Import your existing contacts',d:'0:50',setup:1},
+  {id:'v7',cat:'team',t:'Invite your team',d:'0:40',setup:1},
+  {id:'v8',cat:'camp',t:'Send your first campaign',d:'1:45',setup:1},
+  {id:'v9',cat:'inbox',t:'A quick tour of the Inbox',d:'2:00'},
+  {id:'v10',cat:'leads',t:'Use the pipeline board',d:'1:40'},
+  {id:'v11',cat:'bots',t:'Build a chatbot flow',d:'2:00'},
+  {id:'v12',cat:'camp',t:'Read your campaign report',d:'1:30'}
+];
+const ARTICLES = [
+  {id:'a1',cat:'start',t:'Your first 10 minutes on Simple Floww',m:3,pop:1,v:'v2',steps:['Open Home and look at the "Finish your setup" checklist.','Click "Start" on "Tell AI about your business" and answer the 3 questions.','Connect your WhatsApp number when the AI asks you to.','Send a test message to your own phone to check that everything works.']},
+  {id:'a2',cat:'wa',t:'Connect your WhatsApp number',m:4,pop:1,v:'v1',steps:['Go to Settings → WhatsApp numbers and click "Connect".','A Facebook window opens. Log in and pick your business.','Enter the number and verify it with the code Meta sends.','Wait until the number shows "Connected". This usually takes a few minutes.']},
+  {id:'a3',cat:'wa',t:'My number is already used in the WhatsApp app',m:2,steps:['A number can be on the WhatsApp app or on the API, not both.','Back up your chats in the WhatsApp app if you need them.','In the app, go to Settings → Account → Delete my account.','Wait a few minutes, then connect the number again in Simple Floww.']},
+  {id:'a4',cat:'wa',t:'Why is my display name still pending?',m:2,steps:['Meta reviews every display name before it shows to customers.','The name should match your business name or brand.','You can still send messages while the review is pending.','If it is rejected, change the name in Settings → WhatsApp numbers and submit again.']},
+  {id:'a5',cat:'inbox',t:'What is the 24-hour reply window?',m:2,pop:1,steps:['When a customer messages you, you can reply freely for 24 hours.','After 24 hours you can only send an approved template.','The chat header shows how much time is left.','Reply quickly, or send a template to restart the conversation.']},
+  {id:'a6',cat:'inbox',t:'Save time with quick replies',m:2,steps:['Go to Settings → Quick replies and add the answers you send often.','In a chat, type / to see your quick replies.','Pick one, edit it if needed, and send.']},
+  {id:'a7',cat:'leads',t:'Import contacts from Excel or CSV',m:3,pop:1,v:'v6',steps:['Go to Leads and click "Import".','Download the sample file and copy your contacts into it.','Phone numbers need the country code, for example 91 for India.','Upload the file, match the columns and click "Import".']},
+  {id:'a8',cat:'leads',t:'Set and manage follow-ups',m:2,steps:['Open a lead in Inbox or Leads.','Under "Next follow-up", pick a date and time.','You get an alert before it is due.','Open Follow-ups to see everything that is overdue, due today or tomorrow.']},
+  {id:'a9',cat:'camp',t:'Get a template approved by Meta',m:4,pop:1,v:'v5',steps:['Go to Campaigns → Templates and click "New template".','Pick the right category: Marketing for offers, Utility for updates about an order or booking.','Write the message and add a sample value for every variable.','Submit. Meta usually replies within 24 hours.']},
+  {id:'a10',cat:'camp',t:'Why was my template rejected?',m:3,steps:['The message starts or ends with a variable such as {{1}}.','A variable has no sample value.','The category is wrong, for example an offer sent as Utility.','The content breaks WhatsApp business policy. Edit the template and submit again.']},
+  {id:'a11',cat:'fix',t:'Why did my campaign messages fail?',m:3,pop:1,steps:['The number is not on WhatsApp.','The number has no country code, so it cannot be delivered.','Your wallet balance ran out during sending.','Your number reached its daily sending limit. Send to a smaller group first.']},
+  {id:'a12',cat:'bots',t:'Turn on the welcome message',m:2,v:'v3',steps:['Go to Automations → Chatbots.','Open "Welcome message" and edit the text.','Click "Go live". New customers now get an instant reply.']},
+  {id:'a13',cat:'bots',t:'Pick the right chatbot trigger',m:3,steps:['"First message" runs once for every new customer.','"Message contains" runs when a word appears, such as "price".','Avoid two live bots with the same trigger on the same number.','Pause bots for events that have already happened.']},
+  {id:'a14',cat:'billing',t:'Recharge your wallet and download invoices',m:2,steps:['Click "Recharge" next to your wallet balance at the top.','Pick an amount and pay.','The balance updates within a minute.','Go to Settings → Billing & wallet to download invoices.']},
+  {id:'a15',cat:'team',t:'Invite a team member and pick a role',m:2,v:'v7',steps:['Go to Settings → Team & roles.','Enter their email and pick a role.','They get a link by email and set their own password.','Sales agents only see their own chats and leads.']},
+  {id:'a16',cat:'fix',t:"I can't log in",m:1,steps:['Check that you are using the email your team invited.','Click "Forgot password" on the login page.','If you still cannot log in, raise a ticket from the help button.']}
+];
+const PAGE_TOPIC = {home:'start',setup:'start',inbox:'inbox',leads:'leads',followups:'leads',campaigns:'camp',automations:'bots',reports:'start',help:'start',settings:'billing'};
+
+function videoCard(v){
+  const watched = S.watched.includes(v.id);
+  return `<button class="card stack" style="padding:0;overflow:hidden;text-align:left" data-act="video" data-arg="${v.id}">
+    <span style="aspect-ratio:16/9;max-width:100%;background:linear-gradient(135deg,#e7eafe 0%,#def8fe 100%);display:flex;align-items:center;justify-content:center;position:relative">
+      <span style="width:46px;height:46px;border-radius:999px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center">${ic('play',20)}</span>
+      <span class="pill" style="position:absolute;right:10px;bottom:10px;background:var(--navy);color:#fff">${v.d}</span>
+      ${watched?`<span class="pill p-ok" style="position:absolute;left:10px;top:10px">${ic('check',12,2.6)}Watched</span>`:''}</span>
+    <span class="stack" style="padding:12px 14px;gap:2px"><span style="font-size:12px;font-weight:600;color:var(--blue)">${KB_CATS.find(c=>c.id===v.cat).name}</span><span style="font-weight:600">${v.t}</span></span></button>`;
+}
+const articleRow = a => `<button class="row" style="width:100%;border:0;border-bottom:1px solid var(--line2);background:#fff;padding:12px 16px;text-align:left;flex-wrap:nowrap;gap:12px" data-act="article" data-arg="${a.id}">
+  <span style="color:var(--blue);flex:none">${ic('doc',18)}</span>
+  <span style="flex:1;min-width:0"><span style="display:block;font-weight:600">${a.t}</span><span class="muted" style="font-size:12.5px">${KB_CATS.find(c=>c.id===a.cat).name} · ${a.m} min read${a.v?' · has video':''}</span></span>
+  <span class="muted">${ic('chev',16)}</span></button>`;
+const statusPill = s => `<span class="pill ${s==='Resolved'?'p-ok':s==='Waiting on you'?'p-warn':s==='In progress'?'p-blue':'p-cyan'}">${s}</span>`;
+
+function searchResults(q){
+  q = (q||'').trim().toLowerCase();
+  if (!q) return '';
+  const arts = ARTICLES.filter(a => (a.t+' '+a.steps.join(' ')).toLowerCase().includes(q));
+  const vids = VIDEOS.filter(v => v.t.toLowerCase().includes(q));
+  if (!arts.length && !vids.length) return `<div class="card stack" style="padding:16px;gap:8px"><b>No results for "${q.replace(/</g,'&lt;')}"</b><p class="muted" style="margin:0;font-size:14px">Try another word, or ask our team.</p><div class="row"><button class="btn btn-p" data-act="w-open" data-arg="chat">Chat with support</button><button class="btn" data-act="h-tab" data-arg="tickets" data-new="1">Raise a ticket</button></div></div>`;
+  return `<div class="card" style="overflow:hidden">${arts.length?`<div class="muted" style="padding:10px 16px;font-size:12.5px;font-weight:600;background:#f8faff">Articles · ${arts.length}</div>${arts.map(articleRow).join('')}`:''}
+    ${vids.length?`<div class="muted" style="padding:10px 16px;font-size:12.5px;font-weight:600;background:#f8faff">Videos · ${vids.length}</div>${vids.map(v=>`<button class="row" style="width:100%;border:0;border-bottom:1px solid var(--line2);background:#fff;padding:12px 16px;text-align:left;flex-wrap:nowrap;gap:12px" data-act="video" data-arg="${v.id}"><span style="color:var(--blue)">${ic('help',18)}</span><span style="flex:1;font-weight:600">${v.t}</span><span class="pill p-grey">${v.d}</span></button>`).join('')}`:''}</div>`;
+}
+
+function articleView(){
+  const a = ARTICLES.find(x=>x.id===S.article);
+  const cat = KB_CATS.find(c=>c.id===a.cat);
+  const vid = a.v ? VIDEOS.find(v=>v.id===a.v) : null;
+  const related = ARTICLES.filter(x=>x.cat===a.cat && x.id!==a.id).slice(0,3);
+  return `<div class="stack" style="gap:16px;max-width:820px">
+    <div class="row muted" style="font-size:13px;gap:6px"><button class="btn btn-q" data-act="h-tab" data-arg="kb">Knowledge base</button>›<button class="btn btn-q" data-act="kb-cat" data-arg="${cat.id}">${cat.name}</button></div>
+    <div><h1 class="h" style="font-size:26px">${a.t}</h1><p class="muted" style="margin:4px 0 0;font-size:13.5px">${a.m} min read · Updated Nov 2026</p></div>
+    <div class="card stack" style="padding:20px;gap:14px">
+      <ol style="margin:0;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:12px">${a.steps.map((s,i)=>`<li class="row" style="gap:12px;align-items:flex-start;flex-wrap:nowrap"><span style="width:26px;height:26px;border-radius:999px;background:var(--tint-blue);color:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex:none">${i+1}</span><span style="padding-top:2px">${s}</span></li>`).join('')}</ol>
+      ${vid?`<button class="row" style="border:1px solid var(--line);background:var(--cloud);border-radius:12px;padding:12px;text-align:left;gap:12px;flex-wrap:nowrap" data-act="video" data-arg="${vid.id}"><span style="width:56px;height:40px;border-radius:8px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;flex:none">${ic('play',18)}</span><span style="flex:1"><b style="display:block">Watch: ${vid.t}</b><span class="muted" style="font-size:12.5px">${vid.d} video</span></span></button>`:''}
+    </div>
+    <div class="card row" style="padding:14px 18px;justify-content:space-between;gap:10px">
+      ${S.helpful[a.id] ? `<span style="font-weight:600;color:var(--ok)">${S.helpful[a.id]==='yes'?'Thanks for the feedback.':'Thanks. We will improve this article.'}</span>` : `<span style="font-weight:600">Was this article helpful?</span><div class="row"><button class="btn" data-act="helpful" data-arg="yes">Yes</button><button class="btn" data-act="helpful" data-arg="no">No</button></div>`}
+    </div>
+    ${S.helpful[a.id]==='no' ? `<div class="card row" style="padding:14px 18px;justify-content:space-between;gap:10px;background:var(--tint-cyan);border-color:#bfeef9"><span>Still stuck? Our team can help.</span><div class="row"><button class="btn btn-p" data-act="w-open" data-arg="chat">Chat with support</button><button class="btn" data-act="h-tab" data-arg="tickets" data-new="1">Raise a ticket</button></div></div>` : ''}
+    ${related.length?`<div class="stack" style="gap:8px"><h2 class="h" style="font-size:16px;font-weight:700">Related articles</h2><div class="card" style="overflow:hidden">${related.map(articleRow).join('')}</div></div>`:''}
+  </div>`;
+}
+
+function ticketForm(){
+  return `<form class="card stack" id="tform" style="padding:20px;gap:12px;max-width:720px">
+    <h2 class="h" style="font-size:18px;font-weight:700">Raise a ticket</h2>
+    <p class="muted" style="margin:0;font-size:14px">Tell us what went wrong. We reply by email and in "My tickets", usually within 4 working hours.</p>
+    <div class="row" style="gap:10px;align-items:flex-end">
+      <label style="flex:1 1 220px"><span class="lbl">Topic</span><select class="inp" id="t-cat">${KB_CATS.map(c=>`<option>${c.name}</option>`).join('')}</select></label>
+      <label style="flex:0 1 180px"><span class="lbl">How urgent?</span><select class="inp" id="t-pri"><option>Normal</option><option>High: work is blocked</option><option>Low: a question</option></select></label>
+    </div>
+    <label><span class="lbl">Subject</span><input class="inp" id="t-sub" placeholder="For example: Campaign stuck at 'Sending'" required></label>
+    <label><span class="lbl">What happened?</span><textarea class="inp" id="t-desc" style="min-height:110px;resize:vertical" placeholder="Steps you took, what you expected, and what you saw instead"></textarea></label>
+    <label class="row" style="gap:10px;border:1px dashed #cfd7f0;border-radius:10px;padding:12px;cursor:pointer"><span style="color:var(--blue)">${ic('plus',18)}</span><span><b>Add a screenshot</b><span class="muted" style="display:block;font-size:12.5px">PNG or JPG, up to 5 MB</span></span><input type="file" id="t-file" accept="image/*" style="display:none"></label>
+    <p class="muted" style="margin:0;font-size:12.5px">We attach your account ID and current page automatically, so you don't have to.</p>
+    <div class="row" style="justify-content:flex-end"><button type="button" class="btn" data-act="t-cancel">Cancel</button><button type="submit" class="btn btn-p">Submit ticket</button></div>
+  </form>`;
+}
+
+function helpPage(){
+  if (S.article) return articleView();
+  const tabs = tabsHtml([['overview','Overview'],['kb','Knowledge base'],['videos','Video tutorials'],['tickets','My tickets']], S.helpTab, 'h-tab');
+  const setupVids = VIDEOS.filter(v=>v.setup);
+  const watchedSetup = setupVids.filter(v=>S.watched.includes(v.id)).length;
+  let body = '';
+  if (S.helpTab==='overview') body = `
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+      <button class="card stack" style="padding:18px;text-align:left;gap:6px" data-act="w-open" data-arg="chat"><span style="color:var(--blue)">${ic('inbox',22)}</span><b>Chat with support</b><span class="muted" style="font-size:13.5px">AI answers instantly. A person joins if needed.</span><span class="pill p-ok" style="align-self:flex-start">Team online · replies in ~10 min</span></button>
+      <button class="card stack" style="padding:18px;text-align:left;gap:6px" data-act="h-tab" data-arg="tickets" data-new="1"><span style="color:var(--blue)">${ic('doc',22)}</span><b>Raise a ticket</b><span class="muted" style="font-size:13.5px">For bugs, billing or anything that needs follow-up.</span><span class="pill p-grey" style="align-self:flex-start">Reply within 4 working hours</span></button>
+      <div class="card stack" style="padding:18px;gap:6px"><span style="color:#16a34a">${ic('phone',22)}</span><b>WhatsApp us</b><span class="muted" style="font-size:13.5px">+91 90530 77359 · Mon–Sat, 10 AM – 7 PM</span><button class="btn btn-g" style="align-self:flex-start;min-height:34px">Open WhatsApp</button></div>
+    </div>
+    <section class="card stack" style="padding:20px;gap:14px">
+      <div class="row" style="justify-content:space-between;gap:12px"><div><h2 class="h" style="font-size:18px;font-weight:700">Getting started in 8 videos</h2><p class="muted" style="margin:2px 0 0;font-size:14px">Under 2 minutes each, in setup order.</p></div>
+        <div class="row" style="gap:10px;min-width:200px"><div class="bar" style="flex:1;min-width:120px"><i style="width:${Math.round(watchedSetup/8*100)}%;background:linear-gradient(135deg,#0a1ef5 0%,#06d6fa 100%)"></i></div><strong style="font-variant-numeric:tabular-nums">${watchedSetup}/8 watched</strong></div></div>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">${setupVids.slice(0,4).map(videoCard).join('')}</div>
+      <div><button class="btn btn-q" data-act="h-tab" data-arg="videos">See all videos →</button></div>
+    </section>
+    <section class="stack" style="gap:10px">
+      <h2 class="h" style="font-size:18px;font-weight:700">Browse by topic</h2>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(230px,1fr))">${KB_CATS.map(c=>{const n=ARTICLES.filter(a=>a.cat===c.id).length,vn=VIDEOS.filter(v=>v.cat===c.id).length;return `<button class="card stack" style="padding:16px;text-align:left;gap:4px" data-act="kb-cat" data-arg="${c.id}"><span style="color:var(--blue)">${ic(c.icon,20)}</span><b>${c.name}</b><span class="muted" style="font-size:13px">${c.desc}</span><span class="muted" style="font-size:12.5px;margin-top:4px">${n} article${n===1?'':'s'}${vn?` · ${vn} video${vn===1?'':'s'}`:''}</span></button>`}).join('')}</div>
+    </section>
+    <div class="split" style="gap:14px">
+      <section class="stack" style="gap:10px;flex:1 1 380px;min-width:0"><h2 class="h" style="font-size:18px;font-weight:700">Popular articles</h2><div class="card" style="overflow:hidden">${ARTICLES.filter(a=>a.pop).map(articleRow).join('')}</div></section>
+      <section class="stack" style="gap:10px;flex:1 1 300px;min-width:0"><div class="row" style="justify-content:space-between"><h2 class="h" style="font-size:18px;font-weight:700">Your recent tickets</h2><button class="btn btn-q" data-act="h-tab" data-arg="tickets">View all</button></div>
+        <div class="card" style="overflow:hidden">${S.tickets.slice(0,3).map(t=>`<button class="row" style="width:100%;border:0;border-bottom:1px solid var(--line2);background:#fff;padding:12px 16px;text-align:left;justify-content:space-between;gap:8px" data-act="h-tab" data-arg="tickets"><span style="min-width:0"><b style="display:block;font-size:14px">${t.sub}</b><span class="muted" style="font-size:12.5px">${t.id} · ${t.when}</span></span>${statusPill(t.status)}</button>`).join('')}</div></section>
+    </div>`;
+  if (S.helpTab==='kb') {
+    const cur = S.kbCat;
+    const list = ARTICLES.filter(a=>!cur || a.cat===cur);
+    body = `<div class="split" style="gap:16px;align-items:flex-start">
+      <nav class="card stack" aria-label="Topics" style="flex:0 0 240px;padding:8px;gap:2px;max-width:100%">
+        <button class="navbtn${!cur?' on':''}" style="min-height:40px;padding:9px 12px;font-size:14px" data-act="kb-cat" data-arg="">All topics <span class="muted" style="margin-left:auto">${ARTICLES.length}</span></button>
+        ${KB_CATS.map(c=>`<button class="navbtn${cur===c.id?' on':''}" style="min-height:40px;padding:9px 12px;font-size:14px" data-act="kb-cat" data-arg="${c.id}"><span class="lab">${c.name}</span><span class="muted">${ARTICLES.filter(a=>a.cat===c.id).length}</span></button>`).join('')}
+      </nav>
+      <div class="stack" style="flex:1 1 420px;min-width:0;gap:12px">
+        ${cur?`<div><h2 class="h" style="font-size:18px;font-weight:700">${KB_CATS.find(c=>c.id===cur).name}</h2><p class="muted" style="margin:2px 0 0;font-size:14px">${KB_CATS.find(c=>c.id===cur).desc}</p></div>`:''}
+        <div class="card" style="overflow:hidden">${list.map(articleRow).join('')}</div>
+        ${cur && VIDEOS.some(v=>v.cat===cur)?`<h3 class="h" style="font-size:15px;font-weight:700">Videos on this topic</h3><div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">${VIDEOS.filter(v=>v.cat===cur).map(videoCard).join('')}</div>`:''}
+      </div></div>`;
+  }
+  if (S.helpTab==='videos') {
+    const cur = S.vidCat;
+    const cats = KB_CATS.filter(c=>VIDEOS.some(v=>v.cat===c.id));
+    body = `<div class="row">${[['','All']].concat(cats.map(c=>[c.id,c.name])).map(([id,l])=>`<button class="chip${cur===id?' on':''}" data-act="vid-cat" data-arg="${id}">${l}</button>`).join('')}</div>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">${VIDEOS.filter(v=>!cur||v.cat===cur).map(videoCard).join('')}</div>`;
+  }
+  if (S.helpTab==='tickets') body = S.ticketNew ? ticketForm() : `
+    <div class="row" style="justify-content:space-between;gap:10px"><p class="muted" style="margin:0;font-size:14px">Tickets you raised from here or from the help button.</p><button class="btn btn-p" data-act="h-tab" data-arg="tickets" data-new="1">${ic('plus',16)}Raise a ticket</button></div>
+    <div class="card tblwrap"><table class="tbl"><thead><tr><th>Ticket</th><th>Topic</th><th>Status</th><th>Last update</th></tr></thead><tbody>
+      ${S.tickets.map(t=>`<tr><td><div style="font-weight:600">${t.sub}</div><div class="muted" style="font-size:12.5px">${t.id}</div></td><td>${t.cat}</td><td>${statusPill(t.status)}${t.status==='Waiting on you'?'<div class="muted" style="font-size:12px;margin-top:4px">We asked for a screenshot</div>':''}</td><td style="white-space:nowrap">${t.when}</td></tr>`).join('')}
+    </tbody></table></div>`;
+  return `<div class="stack" style="gap:18px">
+    <section class="card stack" style="padding:28px 24px;gap:14px;background:linear-gradient(135deg,#e7eafe 0%,#def8fe 100%);border-color:#d6e0fb">
+      <h1 class="h" style="font-size:28px">How can we help?</h1>
+      <label style="position:relative;display:block;max-width:640px"><span style="position:absolute;left:14px;top:13px;color:var(--slate)">${ic('search',20)}</span>
+        <input id="helpq" class="inp" style="padding-left:44px;min-height:48px;font-size:15px;border-color:#cfd7f0" placeholder="Search articles and videos, for example: template rejected" value="${(S.helpQ||'').replace(/"/g,'&quot;')}" aria-label="Search help"></label>
+      <div class="row" style="gap:6px"><span class="muted" style="font-size:13px">Popular:</span>${['template rejected','24-hour window','import contacts','campaign failed','recharge'].map(s=>`<button class="chip" style="min-height:30px;padding:4px 12px;font-size:13px;background:rgba(255,255,255,.7)" data-act="h-search" data-arg="${s}">${s}</button>`).join('')}</div>
+    </section>
+    <div id="help-results">${searchResults(S.helpQ)}</div>
+    ${S.helpQ ? '' : tabs + body}
+  </div>`;
+}
+
+// ---------- floating help widget ----------
+function widget(){
+  if (!S.wOpen) return `<button class="help-fab" data-act="w-open" data-arg="home" aria-label="Help">${ic('help',22)}<span>Help</span></button>`;
+  const topic = PAGE_TOPIC[S.screen] || 'start';
+  const sugg = ARTICLES.filter(a=>a.cat===topic).slice(0,3);
+  let body = '';
+  if (S.wTab==='home') body = `
+    <div class="stack" style="gap:12px">
+      <div class="stack" style="gap:6px"><b>Suggested for this page</b>${sugg.map(a=>`<button class="row" style="border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 12px;text-align:left;flex-wrap:nowrap;gap:10px" data-act="article" data-arg="${a.id}"><span style="color:var(--blue)">${ic('doc',16)}</span><span style="flex:1;font-size:13.5px;font-weight:500">${a.t}</span></button>`).join('')}</div>
+      <button class="btn btn-p" data-act="w-tab" data-arg="chat">${ic('inbox',16)}Chat with us</button>
+      <button class="btn" data-act="w-tab" data-arg="tickets" data-new="1">${ic('doc',16)}Raise a ticket</button>
+      <button class="btn btn-q" data-act="nav" data-arg="help">Open Help Center →</button>
+    </div>`;
+  if (S.wTab==='chat') body = `
+    <div class="stack" id="wchat" style="gap:8px;flex:1;overflow-y:auto;padding-right:2px">
+      ${S.wMsgs.map(m=>m.me
+        ? `<div style="align-self:flex-end;background:var(--blue);color:#fff;border-radius:12px 4px 12px 12px;padding:8px 12px;max-width:85%;font-size:13.5px">${m.t}</div>`
+        : `<div style="align-self:flex-start;max-width:90%"><div class="muted" style="font-size:11.5px;margin-bottom:2px">${m.who||'Simple Floww AI'}</div><div style="background:var(--cloud);border-radius:4px 12px 12px 12px;padding:8px 12px;font-size:13.5px">${m.t}</div>${m.art?`<button class="btn btn-q" style="margin-top:2px" data-act="article" data-arg="${m.art}">Read the full article →</button>`:''}</div>`).join('')}
+    </div>
+    ${S.wMsgs.length<=1?`<div class="row" style="gap:6px">${['Template rejected','Messages failed','How to recharge'].map(q=>`<button class="chip" style="min-height:30px;padding:4px 10px;font-size:12.5px" data-act="w-ask" data-arg="${q}">${q}</button>`).join('')}</div>`:''}
+    ${S.wHuman?'':`<button class="btn" style="min-height:34px" data-act="w-human">Talk to a person</button>`}
+    <form class="row" id="wform" style="flex-wrap:nowrap;gap:6px"><input class="inp" id="wq" style="flex:1;min-width:0" placeholder="Type your question" aria-label="Your question" autocomplete="off"><button class="btn btn-p" type="submit" aria-label="Send" style="width:40px;padding:0;flex:none">${ic('send',16,2)}</button></form>`;
+  if (S.wTab==='tickets') body = S.wTicketNew ? `
+    <form class="stack" id="wtform" style="gap:10px">
+      <label><span class="lbl">Topic</span><select class="inp" id="wt-cat">${KB_CATS.map(c=>`<option>${c.name}</option>`).join('')}</select></label>
+      <label><span class="lbl">Subject</span><input class="inp" id="wt-sub" placeholder="What do you need help with?" required></label>
+      <label><span class="lbl">Details</span><textarea class="inp" id="wt-desc" style="min-height:80px;resize:vertical" placeholder="What happened?"></textarea></label>
+      <p class="muted" style="margin:0;font-size:12px">We attach this page (${S.screen}) and your account ID.</p>
+      <div class="row" style="justify-content:flex-end"><button type="button" class="btn" data-act="w-tab" data-arg="tickets">Back</button><button type="submit" class="btn btn-p">Submit</button></div>
+    </form>` : `
+    <div class="stack" style="gap:8px">
+      <button class="btn btn-p" data-act="w-tab" data-arg="tickets" data-new="1">${ic('plus',16)}Raise a ticket</button>
+      ${S.tickets.slice(0,4).map(t=>`<div style="border:1px solid var(--line);border-radius:10px;padding:10px 12px"><div class="row" style="justify-content:space-between;flex-wrap:nowrap;gap:8px"><b style="font-size:13.5px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.sub}</b>${statusPill(t.status)}</div><div class="muted" style="font-size:12px">${t.id} · ${t.when}</div></div>`).join('')}
+    </div>`;
+  return `<div class="help-panel" role="dialog" aria-label="Help">
+    <div style="background:var(--navy);color:#fff;padding:16px;display:flex;flex-direction:column;gap:4px">
+      <div class="row" style="justify-content:space-between;flex-wrap:nowrap"><b style="font-size:16px">Hi ${S.role==='owner'?'Abhinandan':'Ranjana'}</b><button class="btn" style="width:32px;min-height:32px;padding:0;background:transparent;border-color:rgba(255,255,255,.3);color:#fff" aria-label="Close help" data-act="w-close">${ic('x',16)}</button></div>
+      <span style="font-size:13px;color:#cdd4ff">Ask anything. Our team is online, replies in ~10 min.</span>
+    </div>
+    <div class="tabs" style="padding:0 10px">${[['home','Home'],['chat','Chat'],['tickets','Tickets']].map(([id,l])=>`<button class="tab${S.wTab===id?' on':''}" data-act="w-tab" data-arg="${id}">${l}</button>`).join('')}</div>
+    <div class="stack" style="padding:14px;gap:10px;flex:1;min-height:0;overflow-y:auto">${body}</div>
+  </div>`;
+}
+function aiAnswer(q){
+  const s = q.toLowerCase();
+  const map = [['reject','a10'],['template','a9'],['fail','a11'],['recharge','a14'],['invoice','a14'],['wallet','a14'],['24','a5'],['window','a5'],['import','a7'],['csv','a7'],['excel','a7'],['connect','a2'],['number','a2'],['login','a16'],['password','a16'],['invite','a15'],['team','a15'],['bot','a13'],['welcome','a12'],['follow','a8'],['quick','a6']];
+  const hit = map.find(([k])=>s.includes(k));
+  if (!hit) return {t:'I could not find an exact answer. Click "Talk to a person" and our team will reply here, or raise a ticket.'};
+  const a = ARTICLES.find(x=>x.id===hit[1]);
+  return {t:`<b>${a.t}</b><br>${a.steps.slice(0,3).map((x,i)=>(i+1)+'. '+x).join('<br>')}`, art:a.id};
+}
+
+function settings(){
+  const cur = SET.find(s=>s[0]===S.setTab) || SET[2];
+  let body = '';
+  if (S.setTab==='team') body = `<div class="card stack" style="padding:20px;gap:12px"><h2 class="h" style="font-size:18px;font-weight:700">Invite a team member</h2>
+      <div class="row" style="gap:10px;align-items:flex-end"><label style="flex:1 1 220px"><span class="lbl">Email</span><input class="inp" placeholder="name@business.com"></label><label style="flex:0 1 200px"><span class="lbl">Role</span><select class="inp"><option>Sales agent</option><option>Manager</option><option>Viewer</option></select></label><button class="btn btn-p">Send invite</button></div>
+      <p class="muted" style="margin:0;font-size:13px">They will get a link by email and set their own password.</p></div>
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">${ROLES.map(r=>`<div class="card stack" style="padding:16px;gap:6px"><strong>${r.name}</strong><span class="muted" style="font-size:13.5px">${r.can}</span>${r.cannot?`<span style="font-size:13px;color:var(--bad)">${r.cannot}</span>`:''}</div>`).join('')}</div>
+    <div class="card tblwrap"><table class="tbl"><thead><tr><th>Name</th><th>Role</th><th>Leads</th><th>Last login</th></tr></thead><tbody>
+      <tr><td style="font-weight:600">Abhinandan</td><td>Owner</td><td>43</td><td>Now</td></tr><tr><td style="font-weight:600">Gunjan</td><td>Manager</td><td>38</td><td>12 min ago</td></tr>
+      <tr><td style="font-weight:600">Ranjana</td><td>Sales agent</td><td>35</td><td>1 hr ago</td></tr><tr><td style="font-weight:600">Sachin</td><td>Sales agent</td><td>11</td><td>Yesterday</td></tr></tbody></table></div>`;
+  else if (S.setTab==='billing') body = `<div class="card row" style="padding:20px;gap:18px;justify-content:space-between">
+      <div><div class="muted" style="font-size:13px;font-weight:600">Wallet balance</div><div class="h" style="font-size:34px;font-weight:800">${money(BALANCE)}</div><div class="muted" style="font-size:13px">About 490 marketing messages</div></div>
+      <div class="stack" style="gap:8px"><div class="row" style="gap:6px">${[500,1000,2000].map(a=>`<button class="chip${S.recharge===a?' on':''}" data-act="ramt" data-arg="${a}">₹${nf(a)}</button>`).join('')}<button class="chip">Custom amount</button></div>
+      <button class="btn btn-p">Recharge ₹${nf(S.recharge)}</button></div></div>
+    <div class="card row" style="padding:20px;gap:12px;justify-content:space-between"><div><strong>Starter plan</strong><div class="muted" style="font-size:14px">[YOUR PRICE] / month · Valid until 10 Dec 2026 · 26 days left</div></div><div class="row"><button class="btn">Change plan</button><button class="btn btn-p">Renew</button></div></div>
+    <div class="card tblwrap"><table class="tbl"><thead><tr><th>Date</th><th>Description</th><th>Amount</th><th>Status</th><th>Invoice</th></tr></thead><tbody>
+      <tr><td>14 Nov 2026</td><td>WhatsApp number add-on</td><td>₹200.00</td><td><span class="pill p-ok">Paid</span></td><td><button class="btn btn-q">Download</button></td></tr>
+      <tr><td>15 Aug 2026</td><td>Wallet recharge</td><td>₹5,000.00</td><td><span class="pill p-bad">Failed, refunded</span></td><td>—</td></tr>
+      <tr><td>10 Aug 2026</td><td>Starter plan</td><td>₹1,768.00</td><td><span class="pill p-ok">Paid</span></td><td><button class="btn btn-q">Download</button></td></tr></tbody></table></div>`;
+  else body = `<div class="card stack" style="padding:24px;gap:8px"><h2 class="h" style="font-size:18px;font-weight:700">${cur[1]}</h2><p class="muted" style="margin:0;font-size:14px">${cur[2]}</p><p class="muted" style="margin:8px 0 0;font-size:13px">This section's form is not built in the prototype. Open "Team &amp; roles" or "Billing &amp; wallet" to see full examples.</p></div>`;
+  return `<div class="stack" style="gap:16px"><h1 class="h">Settings</h1>
+    <div class="split" style="gap:16px;align-items:flex-start">
+      <nav class="card stack" aria-label="Settings sections" style="flex:0 0 230px;padding:8px;gap:2px;max-width:100%">${SET.map(([id,l])=>`<button class="navbtn${S.setTab===id?' on':''}" style="min-height:40px;padding:9px 12px;font-size:14px;color:${S.setTab===id?'var(--blue)':'var(--navy)'}" data-act="stab" data-arg="${id}">${l}</button>`).join('')}</nav>
+      <div class="stack" style="flex:1 1 400px;min-width:0;gap:14px">${body}</div>
+    </div></div>`;
+}
+
+function videoModal(){
+  if (!S.video) return '';
+  return `<div style="position:fixed;inset:0;background:rgba(10,15,71,.55);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50" data-act="video-close-bg">
+    <div role="dialog" aria-modal="true" aria-label="${S.video.t}" style="background:#fff;border-radius:18px;width:100%;max-width:720px;overflow:hidden">
+      <div style="aspect-ratio:16/9;background:var(--navy);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px">
+        <span style="width:64px;height:64px;border-radius:999px;background:#fff;color:var(--navy);display:flex;align-items:center;justify-content:center">${ic('play',26)}</span>
+        <span style="color:#b8c2e6;font-size:13px">Your video plays here (${S.video.d})</span></div>
+      <div class="row" style="padding:16px 20px;justify-content:space-between"><strong style="font-size:16px">${S.video.t}</strong><button class="btn" data-act="video-close">Close</button></div>
+    </div></div>`;
+}
+
+// ---------- render ----------
+const SCREENS = {home, setup, inbox, leads, followups, campaigns, automations, reports, help:helpPage, settings};
+function render(){
+  const root = document.getElementById('app');
+  const y = window.scrollY;
+  root.innerHTML = `<div class="app">${sidebar()}<div class="main">${topbar()}<main class="content" id="main">${(SCREENS[S.screen]||home)()}</main></div></div>${widget()}${videoModal()}`;
+  window.scrollTo(0, y);
+  const wc = document.getElementById('wchat'); if (wc) wc.scrollTop = wc.scrollHeight;
+}
+function go(screen, extra){ Object.assign(S, {screen, wizard:false, switchOpen:false, article:null, ticketNew:false}, extra||{}); render(); window.scrollTo(0,0); }
+function addTicket(sub, cat){
+  const n = 1043 + S.tickets.filter(t=>+t.id.slice(4)>=1043).length;
+  S.tickets.unshift({id:'#SF-'+n, sub, cat, status:'Open', when:'Just now'});
+  return '#SF-'+n;
+}
+document.addEventListener('input', e => {
+  if (e.target.id !== 'helpq') return;
+  const had = !!S.helpQ; S.helpQ = e.target.value;
+  if (had !== !!S.helpQ) { const pos = e.target.selectionStart; render(); const el = document.getElementById('helpq'); el.focus(); el.setSelectionRange(pos,pos); }
+  else document.getElementById('help-results').innerHTML = searchResults(S.helpQ);
+});
+document.addEventListener('submit', e => {
+  e.preventDefault();
+  const id = e.target.id;
+  if (id === 'wform') {
+    const q = document.getElementById('wq').value.trim(); if (!q) return;
+    S.wMsgs.push({me:1,t:q.replace(/</g,'&lt;')});
+    S.wMsgs.push(S.wHuman ? {who:'Gunjan · Support',t:'Thanks, I am looking into it. I will reply here in a few minutes.'} : aiAnswer(q));
+    return render();
+  }
+  if (id === 'tform') {
+    const sub = document.getElementById('t-sub').value.trim() || 'Untitled ticket';
+    const tid = addTicket(sub, document.getElementById('t-cat').value);
+    S.ticketNew = false; render();
+    return;
+  }
+  if (id === 'wtform') {
+    const sub = document.getElementById('wt-sub').value.trim() || 'Untitled ticket';
+    const tid = addTicket(sub, document.getElementById('wt-cat').value);
+    S.wTicketNew = false; S.wTab = 'tickets'; render();
+  }
+});
+
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]');
+  if (!el) { if (S.switchOpen){S.switchOpen=false;render();} return; }
+  const a = el.dataset.act, v = el.dataset.arg;
+  if (a==='video-close-bg' && e.target !== el) return;
+  switch(a){
+    case 'nav': return go(v);
+    case 'switch': S.switchOpen = !S.switchOpen; return render();
+    case 'role':
+      S.role = v;
+      if (v==='agent'){ if (['campaigns','automations','reports','settings','setup'].includes(S.screen)) S.screen='home'; S.inboxTab='mine'; S.leadFilter='all'; }
+      return render();
+    case 'recharge': return go('settings',{setTab:'billing'});
+    case 'go-setup': return go('setup');
+    case 'go-test': return go('setup',{planApplied:true,waConnected:true,biz:S.biz||'Agency / Service',source:S.source||'Website',team:S.team||'2 to 5 people'});
+    case 'go-automations': return go('automations',{autoTab:'bots'});
+    case 'go-templates': return go('campaigns',{campTab:'templates'});
+    case 'go-leads': return go('leads');
+    case 'go-team': return go('settings',{setTab:'team'});
+    case 'go-followups': return go('followups');
+    case 'go-pending': return go('inbox',{inboxTab:'pending'});
+    case 'ai-done': S.done[v]=true; return render();
+    case 'video': {
+      const vv = VIDEOS.find(x=>x.id===v) || (v==='camp' ? VIDEOS[7] : VIDEOS[+v]);
+      S.video = {t:vv.t, d:vv.d};
+      if (!S.watched.includes(vv.id)) S.watched.push(vv.id);
+      return render();
+    }
+    case 'h-tab': S.article=null; S.helpQ=''; S.helpTab=v; S.ticketNew=!!el.dataset.new; S.wOpen=false; if (S.screen!=='help') return go('help',{helpTab:v,ticketNew:!!el.dataset.new}); render(); return window.scrollTo(0,0);
+    case 'kb-cat': return go('help',{helpTab:'kb',kbCat:v,helpQ:''});
+    case 'vid-cat': S.vidCat=v; return render();
+    case 'article': return go('help',{article:v,helpQ:'',wOpen:false});
+    case 'helpful': S.helpful[S.article]=v; return render();
+    case 'h-search': S.helpQ=v; return render();
+    case 't-cancel': S.ticketNew=false; return render();
+    case 'w-open': S.wOpen=true; S.wTab=v||'home'; return render();
+    case 'w-close': S.wOpen=false; S.wTicketNew=false; return render();
+    case 'w-tab': S.wTab=v; S.wTicketNew=!!el.dataset.new; return render();
+    case 'w-ask': S.wMsgs.push({me:1,t:v}); S.wMsgs.push(aiAnswer(v)); return render();
+    case 'w-human': S.wHuman=true; S.wMsgs.push({me:1,t:'Talk to a person'}); S.wMsgs.push({who:'Simple Floww',t:'Connecting you to our team. Gunjan from support will reply here, usually within 10 minutes. We also created ticket '+addTicket('Chat: '+(S.wMsgs.filter(m=>m.me)[0]||{t:'Help request'}).t,'Getting started')+' so you can track it.'}); return render();
+    case 'video-close': case 'video-close-bg': S.video=null; return render();
+    case 'answer': S[el.dataset.key]=v; return render();
+    case 'apply-plan': S.planApplied=true; S.done.profile=true; S.done.bot=true; return render();
+    case 'restart': S.biz=S.source=S.team=null; return render();
+    case 'connect': S.waConnected=true; S.done.wa=true; return render();
+    case 'send-test': S.testSent=true; S.done.test=true; return render();
+    case 'itab': S.inboxTab=v; S.activeChat=0; return render();
+    case 'chat': S.activeChat=+v; return render();
+    case 'lview': S.leadsView=v; return render();
+    case 'lfilter': S.leadFilter=v; return render();
+    case 'ctab': S.campTab=v; return render();
+    case 'atab': S.autoTab=v; return render();
+    case 'stab': S.setTab=v; return render();
+    case 'ramt': S.recharge=+v; return render();
+    case 'wiz-start': S.wizard=true; S.wstep=1; S.campSent=false; render(); return window.scrollTo(0,0);
+    case 'wiz-close': S.wizard=false; return render();
+    case 'wiz-back': if (S.wstep===1) S.wizard=false; else S.wstep--; return render();
+    case 'wiz-next': S.wstep=Math.min(5,S.wstep+1); return render();
+    case 'wiz-send': S.campSent=true; return render();
+    case 'aud': S.aud=v; return render();
+    case 'tpl': S.tpl=+v; return render();
+    case 'when': S.when=v; return render();
+  }
+});
+document.addEventListener('keydown', e => { if (e.key==='Escape' && (S.video||S.switchOpen||S.wOpen)){ if (S.video) S.video=null; else S.wOpen=false; S.switchOpen=false; render(); } });
+
+if (location.hash === "#setup") S.screen = "setup";
+if (location.hash === "#agent") { S.role = "agent"; S.inboxTab = "mine"; }
+render();
+})();
+</script>
+</body>
+</html>
