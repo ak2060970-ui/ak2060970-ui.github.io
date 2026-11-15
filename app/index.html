@@ -257,7 +257,7 @@ const S = {
   calView:'week', calDate:'2026-11-14', calType:'all', calSel:null, calNew:null,
   stageSel:'Interested', lostOpen:false, lostSaved:'',
   screen:'home', role:'owner', switchOpen:false,
-  fuView:'list', fuPerson:'all',
+  fuView:'list', fuPerson:'all', fuTeam:'all',
   ob:{num:false,test:false,welcome:false,hidden:false,err:''}, fbOpen:false, fb:0,
   fbd:{mode:'new',biz:'existing',bizName:'',site:'',name:'Simple Floww',cat:'Professional services',phone:'',via:'sms',code:''},
   obTest:{to:'',st:0,reply:false}, obWelcomeOn:true, obWelcome:'Hi! Thanks for messaging Simple Floww. How can we help you today?',
@@ -661,12 +661,13 @@ function leads(){
 
 const STAFF = ['Abhinandan','Gunjan','Ranjana','Sachin'];
 function followups(){
-  const open = e => !e.done;
+  const open = e => !e.done && (S.fuTeam === 'all' || e.team === S.fuTeam);
   const people = STAFF.map(n => { const ev = CAL.filter(e => e.owner === n && open(e)); return {n, open:ev.length, late:ev.filter(isLate).length, today:ev.filter(e=>e.date===TODAY).length}; });
   const allOpen = CAL.filter(open);
   const head = `<div class="row" style="justify-content:space-between;gap:12px">
-      <div><h1 class="h">Follow-ups</h1><p class="muted" style="margin:4px 0 0;font-size:14px">${owner() ? (S.fuPerson==='all' ? 'Every follow-up, meeting, reminder and task across your team' : `Showing ${S.fuPerson}'s follow-ups`) : 'Your follow-ups, meetings, reminders and tasks'}</p></div>
-      <div class="row"><div class="seg" role="group" aria-label="View">${[['list','List'],['calendar','Calendar']].map(([id,l])=>`<button class="btn${S.fuView===id?' on':''}" data-act="fu-view" data-arg="${id}" aria-pressed="${S.fuView===id}">${id==='calendar'?ic('calendar',16):''}${l}</button>`).join('')}</div>
+      <div><h1 class="h">Follow-ups</h1><p class="muted" style="margin:4px 0 0;font-size:14px">${owner() ? (S.fuPerson==='all' ? 'Every follow-up, meeting, reminder and task across your team' : `Showing ${S.fuPerson}'s follow-ups`) + (S.fuTeam==='all' ? '' : ` · ${S.fuTeam} only`) : 'Your follow-ups, meetings, reminders and tasks'}</p></div>
+      <div class="row"><div class="seg" role="group" aria-label="Sales or Support">${[['all','All'],['Sales','Sales'],['Support','Support']].map(([id,l])=>`<button class="btn${S.fuTeam===id?' on':''}" data-act="fu-team" data-arg="${id}" aria-pressed="${S.fuTeam===id}">${l} · ${CAL.filter(e=>!e.done&&(id==='all'||e.team===id)&&(owner()||e.owner==='Ranjana')).length}</button>`).join('')}</div>
+      <div class="seg" role="group" aria-label="View">${[['list','List'],['calendar','Calendar']].map(([id,l])=>`<button class="btn${S.fuView===id?' on':''}" data-act="fu-view" data-arg="${id}" aria-pressed="${S.fuView===id}">${id==='calendar'?ic('calendar',16):''}${l}</button>`).join('')}</div>
       <button class="btn btn-p" data-act="cal-new" data-arg="${TODAY}">+ Add follow-up</button></div></div>`;
   const byPerson = owner() ? `<section class="stack" style="gap:8px"><div class="row" style="justify-content:space-between"><h2 class="h" style="font-size:15px;font-weight:700">By person</h2><span class="muted" style="font-size:13px">Click a person to see only their follow-ups</span></div>
     <div class="fu-people">
@@ -693,7 +694,7 @@ function followups(){
       <span style="flex:0 0 92px;font-size:13px;font-weight:700;color:${isLate(e)?'var(--bad)':T.c}">${e.date===TODAY||e.date===tomorrow?t12(e.time):shortDate(e.date).replace(/^\w+, /,'')+'<br>'+t12(e.time)}</span>
       <button style="flex:1 1 220px;min-width:0;border:0;background:none;text-align:left;padding:0;font:inherit;color:inherit;cursor:pointer" data-act="cal-ev" data-arg="${e.id}">
         <span style="display:block;font-weight:600;${e.done?'text-decoration:line-through;opacity:.6':''}">${e.title}</span>
-        <span class="muted" style="font-size:13px"><span class="cal-dot" style="background:${T.c}"></span>${T.l}${e.note?' · '+e.note:''}</span></button>
+        <span class="muted" style="font-size:13px"><span class="pill ${e.team==='Sales'?'p-blue':'p-cyan'}" style="margin-right:6px">${e.team}</span><span class="cal-dot" style="background:${T.c}"></span>${T.l}${e.note?' · '+e.note:''}</span></button>
       ${owner() ? `<label class="row" style="gap:6px;flex-wrap:nowrap;font-size:12.5px"><span class="muted">Assigned</span><select class="fu-own" data-fuown="${e.id}" aria-label="Assigned to">${STAFF.map(n=>`<option${e.owner===n?' selected':''}>${n}</option>`).join('')}</select></label>` : ''}
       <span class="row" style="gap:6px;flex-wrap:nowrap">${e.lead?`<button class="btn" style="min-height:36px" data-act="nav" data-arg="inbox">Chat</button>`:''}<button class="btn${e.done?'':' btn-p'}" style="min-height:36px" data-act="cal-done" data-arg="${e.id}">${e.done?'Undo':'Done'}</button></span></div>`; };
   return `<div class="stack" style="gap:16px">${head}${byPerson}
@@ -732,6 +733,8 @@ const CAL = [
   {id:'c20',date:'2026-11-27',time:'17:00',type:'meeting',title:'Quarterly review',note:'Meera Textiles',lead:'Meera Textiles',owner:'Abhinandan',done:false},
   {id:'c21',date:'2026-11-28',time:'11:00',type:'reminder',title:'Webinar invite goes out',note:'Scheduled campaign',lead:'',owner:'Abhinandan',done:false}
 ];
+const SUPPORT_IDS = ['c4','c6','c7','c15','c18','c21'];
+CAL.forEach(e => { e.team = SUPPORT_IDS.includes(e.id) ? 'Support' : 'Sales'; });
 const TODAY = '2026-11-14';
 const DOW = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 const MON = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -743,7 +746,7 @@ const weekStart = s => { const d = parseD(s); d.setDate(d.getDate()-(d.getDay()+
 const dayName = s => DOW[(parseD(s).getDay()+6)%7];
 const shortDate = s => { const d = parseD(s); return `${dayName(s)}, ${d.getDate()} ${MON[d.getMonth()].slice(0,3)}`; };
 const t12 = t => { const [h,m] = t.split(':').map(Number); return ((h+11)%12+1)+':'+pad2(m)+(h<12?' AM':' PM'); };
-const calMine = e => owner() ? (S.fuPerson === 'all' || e.owner === S.fuPerson) : e.owner === 'Ranjana';
+const calMine = e => (S.fuTeam === 'all' || e.team === S.fuTeam) && (owner() ? (S.fuPerson === 'all' || e.owner === S.fuPerson) : e.owner === 'Ranjana');
 const calEvents = day => CAL.filter(e => e.date===day && calMine(e) && (S.calType==='all' || e.type===S.calType)).sort((a,b)=>a.time.localeCompare(b.time));
 const isLate = e => !e.done && e.date < TODAY;
 
@@ -818,7 +821,7 @@ function calModal(){
       <div class="stack" style="gap:8px;font-size:14.5px">
         <div><span class="muted">When:</span> ${shortDate(e.date)} · ${t12(e.time)}${isLate(e)?' · <b style="color:var(--bad)">Overdue</b>':''}</div>
         ${e.lead?`<div><span class="muted">Lead:</span> ${e.lead}</div>`:''}
-        <div><span class="muted">Assigned to:</span> ${e.owner}</div>
+        <div><span class="muted">Assigned to:</span> ${e.owner} · ${e.team}</div>
         ${e.note?`<div><span class="muted">Note:</span> ${e.note}</div>`:''}
         ${e.done?'<div style="color:var(--ok);font-weight:600">Done</div>':''}
       </div>
@@ -833,7 +836,7 @@ function calModal(){
       <label><span class="lbl">Title</span><input class="inp" name="ct" placeholder="e.g. Call back about the demo"></label>
       <label><span class="lbl">Lead (optional)</span><select class="inp" name="cl"><option value="">No lead</option>${LEADS.map(l=>`<option>${l.name}</option>`).join('')}</select></label>
       <div class="row" style="gap:10px;flex-wrap:nowrap"><label style="flex:1;min-width:0"><span class="lbl">Date</span><input class="inp" type="date" name="cd" value="${S.calNew}" required></label><label style="flex:1;min-width:0"><span class="lbl">Time</span><input class="inp" type="time" name="ctm" value="11:00" required></label></div>
-      <label><span class="lbl">Assign to</span><select class="inp" name="co">${people.map(p=>`<option>${p}</option>`).join('')}</select></label>
+      <div class="row" style="gap:10px;flex-wrap:nowrap"><label style="flex:1;min-width:0"><span class="lbl">Assign to</span><select class="inp" name="co">${people.map(p=>`<option>${p}</option>`).join('')}</select></label><label style="flex:1;min-width:0"><span class="lbl">Team</span><select class="inp" name="cteam">${['Sales','Support'].map(t=>`<option${S.fuTeam===t?' selected':''}>${t}</option>`).join('')}</select></label></div>
       <label><span class="lbl">Note (optional)</span><input class="inp" name="cn" placeholder="What needs to happen?"></label>
       <p class="muted" style="margin:0;font-size:13px">The person gets an alert 15 minutes before, on the panel and in the app.</p>
       <div class="row" style="justify-content:flex-end;gap:8px"><button type="button" class="btn" data-act="cal-close">Cancel</button><button class="btn btn-p" type="submit">Save</button></div>
@@ -1260,7 +1263,7 @@ document.addEventListener('submit', e => {
     const type = (e.target.querySelector('input[name=ctype]:checked') || {}).value || 'followup';
     const lead = f.cl.value, date = f.cd.value || S.calDate;
     const title = f.ct.value.trim() || lead || CAL_TYPES[type].l;
-    CAL.push({id:'c'+Date.now(), date, time:f.ctm.value || '11:00', type, title, note:f.cn.value.trim(), lead, owner:f.co.value, done:false});
+    CAL.push({id:'c'+Date.now(), date, time:f.ctm.value || '11:00', type, title, note:f.cn.value.trim(), lead, owner:f.co.value, team:f.cteam.value, done:false});
     S.calNew = null; S.calDate = date; S.calType = 'all';
     return render();
   }
@@ -1298,6 +1301,7 @@ document.addEventListener('click', e => {
     case 'nav': S.calSel = null; S.calNew = null; if (v === 'calendar') { S.fuView = 'calendar'; return go('followups'); } return go(v);
     case 'fu-view': S.fuView = v; if (v === 'calendar') S.calView = S.calView || 'week'; return render();
     case 'fu-person': S.fuPerson = v; return render();
+    case 'fu-team': S.fuTeam = v; return render();
     case 'cal-view': S.calView = v; return render();
     case 'cal-type': S.calType = v; return render();
     case 'cal-today': S.calDate = TODAY; return render();
