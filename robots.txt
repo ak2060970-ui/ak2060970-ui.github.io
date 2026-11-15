@@ -3,5 +3,6 @@ Allow: /
 Disallow: /app/
 Disallow: /login/
 Disallow: /signup/
+Disallow: /helpdesk/
 
 Sitemap: https://simplefloww.com/sitemap.xml
