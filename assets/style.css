@@ -823,3 +823,41 @@ section { padding-block: 76px; }
 .cm-ev span { color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .t-follow { background: var(--royal); } .t-meet { background: #0b7285; } .t-task { background: var(--ok); }
 @media (max-width: 420px) { .cm-board { grid-template-columns: repeat(3, minmax(96px, 1fr)); overflow-x: auto; } }
+
+/* Mobile app section */
+.ma-sec { background: var(--tint); }
+.ma-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 56px; align-items: center; }
+@media (max-width: 900px) { .ma-grid { grid-template-columns: 1fr; gap: 36px; } }
+.ma-copy { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.ma-cta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 8px; }
+.ma-soon { color: var(--ink-3); font-size: 14px; max-width: 280px; }
+.ma-phone { justify-self: center; position: relative; display: block; width: 290px; max-width: 100%; aspect-ratio: 9 / 18.5; border-radius: 40px; background: #0a0f47; padding: 9px; box-shadow: 0 40px 70px -30px rgba(1, 11, 72, .55); text-decoration: none; color: #0a0f47; transition: transform .2s ease; }
+.ma-phone:hover { transform: translateY(-4px); }
+.ma-phone:focus-visible { outline: 3px solid var(--cyan); outline-offset: 4px; }
+.ma-screen { display: flex; flex-direction: column; gap: 10px; height: 100%; border-radius: 32px; background: #f4f8ff; padding: 28px 12px 0; overflow: hidden; font-size: 11px; }
+.ma-hi small { display: block; color: #4a5275; font-size: 10px; }
+.ma-hi b { font-family: var(--display); font-size: 16px; line-height: 1.2; }
+.ma-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.ma-tiles > span { background: #fff; border: 1px solid #dfe5f5; border-radius: 10px; padding: 7px; font-weight: 600; font-size: 9.5px; line-height: 1.25; }
+.ma-tiles b { display: block; font-family: var(--display); font-size: 18px; }
+.ma-tiles b.w { color: #b25e00; }
+.ma-next { background: #0a0f47; color: #fff; border-radius: 12px; padding: 10px; display: flex; flex-direction: column; gap: 2px; }
+.ma-next small { color: #b8c2e6; font-size: 8.5px; font-weight: 700; letter-spacing: .8px; }
+.ma-next b { font-family: var(--display); font-size: 13px; }
+.ma-next em { font-style: normal; color: #b8c2e6; font-size: 10px; }
+.ma-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; }
+.ma-btns i { font-style: normal; text-align: center; border: 1px solid rgba(255, 255, 255, .3); border-radius: 8px; padding: 5px; font-weight: 600; font-size: 10px; }
+.ma-btns i.g { background: #25d366; border-color: #25d366; color: #0a0f47; }
+.ma-list { background: #fff; border: 1px solid #dfe5f5; border-radius: 12px; overflow: hidden; }
+.ma-row { display: flex; align-items: center; gap: 8px; padding: 7px 9px; border-top: 1px solid #edf1fa; }
+.ma-row:first-child { border-top: 0; }
+.ma-row > i { width: 24px; height: 24px; border-radius: 99px; background: #e7eafe; color: #0a1ef5; font-style: normal; font-weight: 700; font-size: 9px; display: flex; align-items: center; justify-content: center; flex: none; }
+.ma-row > span { flex: 1; min-width: 0; }
+.ma-row b { display: block; font-size: 10.5px; }
+.ma-row small { display: block; color: #4a5275; font-size: 9.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ma-row em { font-style: normal; background: #fff1de; color: #8a4b00; border-radius: 99px; padding: 1px 6px; font-size: 9px; font-weight: 600; }
+.ma-tab { margin: auto -12px 0; background: #fff; border-top: 1px solid #dfe5f5; display: grid; grid-template-columns: repeat(5, 1fr); padding: 8px 6px 14px; }
+.ma-tab i { font-style: normal; text-align: center; font-size: 8.5px; font-weight: 600; color: #4a5275; padding: 5px 0; border-radius: 8px; }
+.ma-tab i.on { background: #e7eafe; color: #0a1ef5; }
+.ma-tap { position: absolute; left: 50%; bottom: -16px; transform: translateX(-50%); white-space: nowrap; background: var(--royal); color: #fff; font-weight: 700; font-size: 13px; border-radius: 99px; padding: 7px 14px; box-shadow: 0 10px 24px -10px rgba(0, 26, 243, .8); }
+@media (prefers-reduced-motion: reduce) { .ma-phone { transition: none; } .ma-phone:hover { transform: none; } }

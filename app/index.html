@@ -373,6 +373,7 @@ const ROLES = [
 ];
 
 // ---------- pieces ----------
+const MOBILE_URL = '/mobile-app/';
 function sidebar(){
   const items = NAV.filter(n => owner() || n.agent);
   const foot = [{id:'help',label:'Help & Videos'}].concat(owner() ? [{id:'settings',label:'Settings'}] : []);
@@ -397,6 +398,7 @@ function sidebar(){
       ${items.map(btn).join('')}
       <div class="sep"></div>
       ${foot.map(btn).join('')}
+      <a class="navbtn" href="${MOBILE_URL}" target="_blank" rel="noopener" style="text-decoration:none">${ic('phone')}<span class="lab">Mobile app</span><span class="pill p-cyan" style="padding:1px 8px">Preview</span></a>
     </nav>
     <div class="m-only" style="flex-direction:column;gap:6px;background:var(--cloud);border-radius:12px;padding:10px">
       <span class="muted" style="font-size:12px;font-weight:600">View as (demo)</span>
@@ -446,6 +448,11 @@ function home(){
   const pend = CHATS.filter(c=>c.pending).slice(0,4);
   return `<div class="stack" style="gap:24px">
     <div><h1 class="h" style="font-size:28px">Welcome, ${first}</h1><p class="muted" style="margin:4px 0 0">${sub}</p></div>
+    <section class="card row" style="padding:12px 16px;gap:16px;background:linear-gradient(120deg,#0a0f47 0%,#1a2a9c 100%);border:0;color:#fff">
+      <span style="width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;flex:none">${ic('phone',22)}</span>
+      <div style="flex:1 1 260px;min-width:0"><div class="h" style="font-size:17px;font-weight:700;color:#fff">Simple Floww mobile app</div><div style="font-size:14px;color:#cdd4f2">Reply to chats, see leads and follow-ups, and connect your number from your phone. Coming soon on Android and iPhone.</div></div>
+      <a class="btn btn-g" href="${MOBILE_URL}" target="_blank" rel="noopener" style="text-decoration:none">Open mobile app preview →</a>
+    </section>
     ${checklist}
     <section class="stack" style="gap:12px">
       <h2 class="h" style="font-size:19px;font-weight:700">Today</h2>

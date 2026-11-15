@@ -1,0 +1,769 @@
+<!doctype html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Simple Floww Mobile App Demo | Try It in Your Browser</title>
+<meta name="description" content="Try a clickable demo of the Simple Floww mobile app: reply to WhatsApp leads, set follow-ups and manage your pipeline from your phone.">
+<link rel="canonical" href="https://simplefloww.com/mobile-app">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://simplefloww.com/mobile-app">
+<meta property="og:title" content="Simple Floww Mobile App Demo">
+<meta property="og:description" content="Reply to WhatsApp leads, set follow-ups and manage your pipeline from your phone. Try the clickable demo.">
+<meta property="og:image" content="https://simplefloww.com/assets/og.png">
+<meta name="theme-color" content="#0a0f47">
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+</head>
+<body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one app shell. On a phone it fills the screen; on a computer it sits in a phone frame. Single light brand look (Simple Floww tokens). */
+:root{
+  --navy:#0a0f47; --blue:#0a1ef5; --green:#25d366; --cloud:#f4f8ff; --paper:#ffffff;
+  --slate:#4a5275; --line:#dfe5f5; --line2:#edf1fa; --tint:#e7eafe; --tint2:#def8fe;
+  --warn-bg:#fff1de; --warn:#8a4b00; --bad-bg:#fde8ea; --bad:#a3262f; --ok-bg:#e3f9eb; --ok:#0b6b34; --chat:#efeae2; --out:#d9fdd3;
+  --fd:"Plus Jakarta Sans","Helvetica Neue",Arial,sans-serif; --fb:Inter,"Helvetica Neue",Arial,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%;background:#dfe6f7}
+body{font-family:var(--fb);color:var(--navy);font-size:14.5px;line-height:1.45}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.stage{min-height:100%;display:flex;align-items:center;justify-content:center;gap:40px;padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
+.side-note{max-width:300px;display:flex;flex-direction:column;gap:12px}
+.side-note h1{font-family:var(--fd);font-size:28px;margin:0;letter-spacing:-.5px}
+.side-note p{margin:0;color:var(--slate)}
+.side-note ul{margin:0;padding-left:18px;color:var(--slate);display:grid;gap:4px}
+.device{width:390px;height:844px;max-height:calc(100vh - 48px);border-radius:46px;background:var(--navy);padding:10px;box-shadow:0 40px 80px -30px rgba(10,15,71,.5);flex:none}
+.screen{width:100%;height:100%;border-radius:38px;overflow:hidden;background:var(--cloud);position:relative;display:flex;flex-direction:column}
+@media (max-width:820px){
+  html,body{background:var(--cloud)}
+  .stage{padding:0;display:block;height:100%}
+  .side-note{display:none}
+  .device{width:100%;height:100%;max-height:none;border-radius:0;padding:0;box-shadow:none}
+  .screen{border-radius:0}
+}
+.body{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y}
+.body > *{flex-shrink:0}
+.pad{padding:16px}
+.top{padding:44px 16px 12px;background:var(--paper);border-bottom:1px solid var(--line2);display:flex;align-items:center;gap:8px;flex:none}
+@media (max-width:820px){.top{padding-top:max(16px,env(safe-area-inset-top,0px))}}
+.top h1{margin:0;font-family:var(--fd);font-size:18px;font-weight:700;flex:1;min-width:0}
+.big-title{margin:0;font-family:var(--fd);font-size:26px;font-weight:800;letter-spacing:-.4px}
+.iconbtn{width:42px;height:42px;border-radius:12px;border:0;background:transparent;display:flex;align-items:center;justify-content:center;color:var(--navy);flex:none;position:relative}
+.iconbtn.box{border:1px solid var(--line);background:var(--paper)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:16px}
+.btn{min-height:46px;border-radius:14px;border:1px solid #cfd7f0;background:var(--paper);font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;padding:0 14px}
+.btn-p{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn-g{background:var(--green);border-color:var(--green);color:var(--navy);font-weight:700}
+.btn-red{color:var(--bad)}
+.pill{display:inline-flex;align-items:center;border-radius:999px;padding:2px 9px;font-size:11.5px;font-weight:600;white-space:nowrap}
+.p-blue{background:var(--tint);color:var(--blue)}.p-cyan{background:var(--tint2);color:var(--navy)}.p-warn{background:var(--warn-bg);color:var(--warn)}.p-bad{background:var(--bad-bg);color:var(--bad)}.p-ok{background:var(--ok-bg);color:var(--ok)}.p-grey{background:var(--cloud);color:var(--slate)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border-radius:999px;padding:8px 13px;font-size:13.5px;font-weight:600;min-height:38px;border:1px solid var(--line);background:var(--paper);white-space:nowrap}
+.chip.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.chip .n{border-radius:999px;padding:0 6px;font-size:11.5px;margin-left:4px;background:var(--tint);color:var(--blue)}
+.chip.on .n{background:rgba(255,255,255,.2);color:#fff}
+.av{border-radius:999px;background:var(--tint);color:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:700;flex:none}
+.row{display:flex;align-items:center;gap:10px}
+.stack{display:flex;flex-direction:column}
+.muted{color:var(--slate)}
+.search{display:flex;align-items:center;gap:10px;background:var(--cloud);border-radius:14px;padding:0 14px;min-height:46px;color:var(--slate)}
+.search input{border:0;outline:none;background:transparent;font-size:15px;flex:1;min-width:0;color:var(--navy)}
+.list-row{display:flex;gap:12px;align-items:flex-start;padding:12px 16px;border:0;border-bottom:1px solid var(--line2);background:var(--paper);width:100%;text-align:left}
+.sw{width:48px;height:28px;border-radius:999px;border:0;position:relative;flex:none;background:var(--line)}
+.sw::after{content:"";position:absolute;top:4px;left:4px;width:20px;height:20px;border-radius:999px;background:#fff;transition:left .15s}
+.sw.on{background:var(--blue)}.sw.on::after{left:24px}
+.sw.g.on{background:var(--green)}
+.tabbar{flex:none;background:var(--paper);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:6px 6px 22px}
+@media (max-width:820px){.tabbar{padding-bottom:max(8px,env(safe-area-inset-bottom,0px))}}
+.tabbar button{border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:600;min-height:52px;border-radius:12px;color:var(--slate);position:relative}
+.tabbar button.on{color:var(--blue);background:var(--tint)}
+.tabbar .b{position:absolute;top:2px;left:50%;margin-left:6px;background:var(--blue);color:#fff;border-radius:999px;font-size:10px;font-weight:700;line-height:16px;min-width:16px;padding:0 4px;text-align:center}
+.fab{position:absolute;right:20px;bottom:100px;width:56px;height:56px;border-radius:18px;border:0;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 28px -10px rgba(10,30,245,.6);z-index:5}
+.scrim{position:absolute;inset:0;background:rgba(10,15,71,.45);z-index:30}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--paper);border-radius:24px 24px 0 0;padding:10px 20px 28px;z-index:31;display:flex;flex-direction:column;gap:14px;max-height:88%;overflow-y:auto}
+.grab{align-self:center;width:40px;height:5px;border-radius:999px;background:var(--line)}
+.opt{border-radius:14px;padding:12px 14px;text-align:left;border:1px solid #cfd7f0;background:var(--paper)}
+.opt.on{border:2px solid var(--blue);background:var(--cloud)}
+.toast{position:absolute;left:16px;right:16px;bottom:96px;background:var(--navy);color:#fff;border-radius:14px;padding:12px 14px;font-size:14px;z-index:40;text-align:center}
+.bubble{max-width:82%;border-radius:14px;padding:8px 12px;font-size:14.5px}
+.b-in{align-self:flex-start;background:#fff;border-top-left-radius:4px}
+.b-out{align-self:flex-end;background:var(--out);border-top-right-radius:4px}
+.b-time{font-size:11px;color:var(--slate);text-align:right}
+.bot{font-size:10.5px;font-weight:700;background:rgba(10,15,71,.08);border-radius:6px;padding:1px 6px}
+.lbl{font-size:13px;font-weight:600;display:block;margin-bottom:6px}
+.field{width:100%;border:1px solid #cfd7f0;border-radius:14px;padding:0 14px;min-height:50px;font-size:16px;background:var(--paper);outline:none}
+.sec-h{font-size:12px;font-weight:700;letter-spacing:1px;color:var(--slate)}
+.cp-in{animation:cpin .22s ease-out}
+@keyframes cpin{from{transform:translateX(24px);opacity:.4}to{transform:none;opacity:1}}
+.cp-acts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.cp-acts .btn{flex-direction:column;gap:3px;min-height:62px;padding:6px 2px;font-size:12.5px;border-radius:12px}
+.steps{display:flex;overflow-x:auto;scrollbar-width:none;padding:4px 2px 2px;margin:0 -4px}
+.steps::-webkit-scrollbar{display:none}
+.step{flex:none;width:76px;border:0;background:none;display:flex;flex-direction:column;align-items:center;gap:6px;padding:0;position:relative;font-size:11.5px;font-weight:600;color:var(--slate);text-align:center;line-height:1.2}
+.step::before{content:"";position:absolute;top:13px;left:-38px;width:76px;height:2px;background:var(--line);z-index:0}
+.step:first-child::before{display:none}
+.step.past::before,.step.cur::before{background:var(--blue)}
+.step i{width:28px;height:28px;border-radius:999px;border:2px solid var(--line);background:var(--paper);position:relative;z-index:1;display:flex;align-items:center;justify-content:center}
+.step i::after{content:"";width:8px;height:8px;border-radius:999px;background:#c3c9dc}
+.step.past i{background:var(--blue);border-color:var(--blue)}.step.past i::after{background:#fff}
+.step.cur{color:var(--blue)}.step.cur i{border-color:var(--blue);box-shadow:0 0 0 4px var(--tint)}.step.cur i::after{background:var(--blue);width:10px;height:10px}
+.step.won.cur{color:var(--ok)}.step.won.cur i{border-color:var(--ok);box-shadow:0 0 0 4px var(--ok-bg)}.step.won.cur i::after{background:var(--ok)}
+.step.lost.cur{color:var(--bad)}.step.lost.cur i{border-color:var(--bad);box-shadow:0 0 0 4px var(--bad-bg)}.step.lost.cur i::after{background:var(--bad)}
+.btn-won{color:var(--ok);border-color:#a8dcbe}.btn-lost{color:var(--bad);border-color:#f0b9be}
+.seg4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:var(--cloud);border-radius:12px;padding:3px;gap:2px}
+.seg4 button{border:0;background:none;border-radius:10px;min-height:38px;font-size:13px;font-weight:600;color:var(--slate)}
+.seg4 button.on{background:var(--paper);color:var(--blue);box-shadow:0 1px 3px rgba(10,15,71,.12)}
+.tl{display:flex;gap:10px;padding:10px 0;border-top:1px solid var(--line2);font-size:14px}
+.tl:first-child{border-top:0}
+.tl .d{width:30px;height:30px;border-radius:999px;background:var(--tint);color:var(--blue);display:flex;align-items:center;justify-content:center;flex:none}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid var(--line2);font-size:14px}
+.kv:first-child{border-top:0}
+.kv span:last-child{font-weight:600;text-align:right}
+.setup{background:linear-gradient(150deg,#0a0f47 0%,#1a2a9c 100%);color:#fff;border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.setup .bar{height:6px;border-radius:99px;background:rgba(255,255,255,.18);overflow:hidden}
+.setup .bar span{display:block;height:100%;background:var(--green);border-radius:99px;transition:width .3s}
+.sstep{display:flex;align-items:center;gap:12px;border:0;background:rgba(255,255,255,.07);border-radius:14px;padding:10px 12px;color:#fff;text-align:left;width:100%;min-height:56px}
+.sstep.cur{background:#fff;color:var(--navy)}
+.sstep .n{width:28px;height:28px;border-radius:999px;border:2px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex:none}
+.sstep.cur .n{border-color:var(--blue);color:var(--blue)}
+.sstep.done .n{background:var(--green);border-color:var(--green);color:var(--navy)}
+.sstep.done b{text-decoration:line-through;opacity:.75}
+.btn-fb{background:#1877f2;border-color:#1877f2;color:#fff;font-weight:700}
+.fbtop{padding:44px 12px 10px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;flex:none}
+@media (max-width:820px){.fbtop{padding-top:max(14px,env(safe-area-inset-top,0px))}}
+.fbprog{height:4px;background:var(--line2);flex:none}.fbprog span{display:block;height:100%;background:#1877f2;transition:width .3s}
+.need{display:flex;gap:12px;align-items:flex-start;font-size:14.5px}
+.need .d{width:30px;height:30px;border-radius:10px;background:var(--tint);color:var(--blue);display:flex;align-items:center;justify-content:center;flex:none}
+.otp{font-size:24px;letter-spacing:10px;text-align:center;font-weight:700}
+.tick{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;border-radius:999px;padding:4px 10px;background:var(--line2);color:var(--slate)}
+.tick.on{background:var(--ok-bg);color:var(--ok)}
+@media (prefers-reduced-motion:reduce){.sw::after{transition:none}.cp-in{animation:none}.setup .bar span,.fbprog span{transition:none}}
+body{margin:0}
+.side-note .back{color:var(--blue);font-weight:600;text-decoration:none;font-size:14px}
+.side-note .soon{align-self:flex-start;background:var(--tint2);color:var(--navy);border-radius:999px;padding:4px 12px;font-size:12.5px;font-weight:600}
+.side-note .cta{align-self:flex-start;background:var(--blue);color:#fff;text-decoration:none;font-weight:700;border-radius:12px;padding:12px 18px}
+.demo-bar{display:none}
+@media (max-width:820px){
+  .stage{display:flex;flex-direction:column;gap:0;align-items:stretch;padding:0;min-height:0;height:100%}
+  .device{flex:1;min-height:0;height:auto}
+  .demo-bar{display:flex;align-items:center;gap:10px;background:var(--navy);color:#fff;font-size:12.5px;padding:max(8px,env(safe-area-inset-top,0px)) 12px 8px;flex:none}
+  .demo-bar span{flex:1;min-width:0;text-align:center;color:#cdd4f2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .demo-bar a{color:#fff;font-weight:700;text-decoration:none;white-space:nowrap}
+  .demo-bar a.go{background:var(--green);color:var(--navy);border-radius:999px;padding:3px 10px}
+  .top,.fbtop{padding-top:12px}
+}
+</style>
+
+<div class="stage">
+  <div class="demo-bar"><a href="/">← Website</a><span>Demo · sample data · nothing is sent</span><a href="/signup/" class="go">Free trial</a></div>
+  <div class="side-note">
+    <a class="back" href="/">← Back to website</a>
+    <h1>Try the Simple Floww app</h1>
+    <p>A clickable demo of the mobile app. Tap anything inside the phone.</p>
+    <ul>
+      <li>Connect your WhatsApp number from Home (3 steps)</li>
+      <li>Reply to chats and use quick replies</li>
+      <li>Open a contact: pipeline, calls, reminders</li>
+      <li>Set follow-ups and mark them done</li>
+      <li>Recharge, chatbots and campaigns in More</li>
+    </ul>
+    <span class="soon">Coming soon on Android and iPhone</span>
+    <a class="cta" href="/signup/">Start 7-day free trial</a>
+    <p style="font-size:12.5px">Demo with sample data. Nothing is saved or sent.</p>
+  </div>
+  <div class="device"><div class="screen" id="app"></div></div>
+</div>
+
+<script>
+(function(){
+const P = {
+  home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+  chat:'<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>',
+  users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7"/><path d="M18 14.8c1.9.7 3.1 2.4 3.5 5.2"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  more:'<circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/>',
+  back:'<path d="M15 6l-6 6 6 6"/>', x:'<path d="M6 6l12 12M18 6 6 18"/>',
+  bell:'<path d="M6 16v-5a6 6 0 1 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+  phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>', filter:'<path d="M4 5h16l-6 8v6l-4-2v-4z"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>', send:'<path d="M4 12 20 4l-6 16-3-7z"/>', check:'<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+  mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
+  pencil:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>', mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5"/>',
+  tag:'<path d="M3 12V4h8l9 9-8 8z"/><circle cx="7.5" cy="8.5" r="1.3"/>', user:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/>',
+  trend:'<path d="m3 17 6-6 4 4 8-8"/><path d="M15 7h6v6"/>', note:'<path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h5"/>',
+  lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>', shield:'<path d="M12 3 5 6v5c0 4.5 3 8.5 7 10 4-1.5 7-5.5 7-10V6z"/><path d="m9 12 2 2 4-4"/>',
+  sim:'<rect x="6" y="3" width="12" height="18" rx="2"/><path d="M10 17h4"/>', globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 3 2.5 15 0 18M12 3c-2.5 3-2.5 15 0 18"/>',
+  play:'<path d="M8 5.5v13l11-6.5z" fill="currentColor" stroke="none"/>', chev:'<path d="m9 6 6 6-6 6"/>'
+};
+const ic=(n,s=22,w=1.9)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${P[n]}</svg>`;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money=x=>'₹'+x.toLocaleString('en-IN',{maximumFractionDigits:2});
+
+// ---------- data ----------
+const CHATS = {
+  NV:{ini:'NV',name:'Neha Verma',phone:'+91 98765 43210',src:'Facebook ad',time:'2 min',unread:2,owner:'Gunjan',waiting:true,stage:'Interested',next:'Tomorrow, 11:00 AM',tags:['Hot lead'],note:'Asked about pricing. Share a demo slot tomorrow.',closed:false,
+    msgs:[{o:1,bot:1,t:'What would you like to use Simple Floww for?',at:'11:40 AM'},{o:0,re:'What would you like to use…',t:'Bulk Messaging',at:'11:41 AM'},{o:1,bot:1,t:'Thank you! Our team will contact you shortly.',at:'11:41 AM'},{o:0,t:'What is the monthly price? Can I get a demo?',at:'11:43 AM'}]},
+  RJ:{ini:'RJ',name:'Rohit Jain',phone:'+91 97654 32109',src:'Website',time:'9 min',unread:1,owner:'You',mine:1,waiting:true,stage:'New lead',next:'Today, 4:00 PM',tags:[],note:'Wants a chatbot demo.',closed:false,
+    msgs:[{o:1,bot:1,t:'Hi! Which feature are you interested in?',at:'3:44 PM'},{o:0,re:'Which feature are you…',t:'Chatbot',at:'3:46 PM'}]},
+  SR:{ini:'SR',name:'Sunrise Realty',phone:'+91 99887 76655',src:'IndiaMART',time:'24 min',unread:1,owner:'Unassigned',un:1,waiting:true,stage:'New lead',next:'Not set',tags:[],note:'',closed:false,
+    msgs:[{o:0,t:'📷 Photo',at:'3:31 PM'}]},
+  AG:{ini:'AG',name:'Aman Gupta',phone:'+91 96543 21098',src:'Facebook ad',time:'1 hr',unread:0,owner:'You',mine:1,waiting:true,stage:'Interested',next:'Overdue by 2 days',late:1,tags:[],note:'Send the price list.',closed:false,bot:1,
+    msgs:[{o:0,t:'Hi, I want to know the plans',at:'2:50 PM'},{o:1,bot:1,t:'Thank you! Our team will contact you shortly.',at:'2:50 PM'}]},
+  PC:{ini:'PC',name:'Priya Classes',phone:'+91 93456 78901',src:'Website',time:'2 hr',unread:3,owner:'Unassigned',un:1,waiting:true,stage:'New lead',next:'Not set',tags:[],note:'',closed:false,
+    msgs:[{o:0,t:'🎤 Voice note · 0:12',at:'1:55 PM'}]},
+  KM:{ini:'KM',name:'Karan Mehta',phone:'+91 98123 45678',src:'Referral',time:'Wed',unread:0,owner:'Gunjan',waiting:false,stage:'Demo booked',next:'Tomorrow, 4:00 PM',tags:['Hot lead'],note:'Demo call.',closed:true,
+    msgs:[{o:0,t:'Can we do the demo this week?',at:'Wed 5:10 PM'},{o:1,t:'Does 4 PM tomorrow work for the demo?',at:'Wed 5:12 PM'}]},
+  MT:{ini:'MT',name:'Meera Textiles',phone:'+91 90123 87654',src:'Referral',time:'Mon',unread:0,owner:'You',mine:1,waiting:false,stage:'Won',next:'—',tags:[],note:'Paid for yearly plan.',closed:false,
+    msgs:[{o:0,t:'Payment done, thanks!',at:'Mon 12:05 PM'}]}
+};
+// More sample chats so the lists scroll like a real inbox
+[['AS','Ananya Sharma','+91 98111 22334','Instagram','2 hr',1,'Gunjan',1,'Interested','Do you have a plan for 3 users?'],
+ ['VK','Vikram Kapoor','+91 98222 33445','Facebook ad','3 hr',0,'You',1,'New lead','Hi, I saw your ad'],
+ ['DS','Dr. Sneha Clinic','+91 98333 44556','Website','3 hr',2,'Unassigned',1,'New lead','Can patients book appointments on WhatsApp?'],
+ ['GE','Gupta Electronics','+91 98444 55667','IndiaMART','4 hr',0,'Rahul',0,'Negotiation','Send the final quote please'],
+ ['RS','Riya Singh','+91 98555 66778','Instagram','5 hr',1,'You',1,'Interested','Is there a free trial?'],
+ ['HM','Harsh Malhotra','+91 98666 77889','Referral','Yesterday',0,'Gunjan',0,'Demo booked','See you at the demo'],
+ ['TF','The Fit Studio','+91 98777 88990','Website','Yesterday',0,'Rahul',0,'Won','Thanks, the setup is done'],
+ ['PS','Pooja Saxena','+91 98888 99001','Facebook ad','Yesterday',1,'Unassigned',1,'New lead','Price?'],
+ ['BR','Bright Realtors','+91 98999 00112','99acres','Tue',0,'You',0,'Negotiation','Can we get a discount on yearly?'],
+ ['NK','Nikhil Kumar','+91 97000 11223','Website','Tue',0,'Gunjan',0,'Lost','We went with another tool'],
+ ['SC','Smart Coaching','+91 97111 22334','Referral','Mon',0,'You',0,'Interested','Will call you on Monday'],
+ ['AJ','Arjun Joshi','+91 97222 33445','Instagram','Sun',0,'Rahul',0,'New lead','Ok thanks']
+].forEach(([ini,name,ph,src,time,unread,owner,waiting,stage,last])=>{
+  CHATS[ini]={ini,name,phone:ph,src,time,unread,owner,mine:owner==='You'?1:0,un:owner==='Unassigned'?1:0,waiting:!!waiting,stage,next:waiting?'Not set':'Next week',tags:[],note:'',closed:/Mon|Sun|Tue/.test(time),
+    msgs:[{o:0,t:last,at:time}]};
+});
+const ORDER=['NV','RJ','SR','AG','PC','AS','VK','DS','GE','RS','KM','HM','TF','PS','MT','BR','NK','SC','AJ'];
+const STAGES=['New Lead','Contacted','Qualified','Demo scheduled','Demo done','Free trial','Decision pending','Won','Lost'];
+const STAGE_PILL={'New Lead':'p-blue','Contacted':'p-blue','Qualified':'p-cyan','Demo scheduled':'p-warn','Demo done':'p-warn','Free trial':'p-cyan','Decision pending':'p-warn','Won':'p-ok','Lost':'p-grey'};
+const WIN={'New Lead':10,'Contacted':20,'Qualified':35,'Demo scheduled':50,'Demo done':60,'Free trial':70,'Decision pending':80,'Won':100,'Lost':0};
+const OWNERS=['You','Gunjan','Ranjana','Sachin','Unassigned'];
+const ALLTAGS=['Hot lead','Follow up','Demo','Price sent','Real estate','Clinic','Education','VIP'];
+{ const M={'New lead':'New Lead','Interested':'Qualified','Demo booked':'Demo scheduled','Negotiation':'Decision pending'}; Object.values(CHATS).forEach(c=>{ c.stage=M[c.stage]||c.stage; }); }
+function X(c){
+  if(!c.x){
+    const k=Object.keys(CHATS).find(k=>CHATS[k]===c);
+    c.x={inPipe:c.stage!=='New Lead',pipe:'Sales Pipeline (Default)',value:{NV:25000,RJ:18000,KM:45000,MT:62000,AG:12000}[k]||0,email:'',city:'',company:'',budget:'',
+      calls:[],tl:[{i:'user',t:'Contact created',s:'Source: '+c.src,at:c.time}]};
+    const first=c.msgs.find(m=>!m.o); if(first) c.x.tl.unshift({i:'chat',t:'WhatsApp message',s:'"'+first.t.slice(0,60)+'"',at:first.at||c.time});
+    if(k==='NV'){ Object.assign(c.x,{email:'neha@vermadesigns.in',city:'Lucknow',company:'Verma Designs',budget:'₹2,000 / month'});
+      c.x.calls=[{r:'Picked up',n:'Wants bulk messaging for 3,000 customers',at:'Yesterday, 5:10 PM',by:'Gunjan'},{r:'No answer',n:'',at:'Yesterday, 12:30 PM',by:'Gunjan'}];
+      c.x.tl.unshift({i:'phone',t:'Call · Picked up',s:'Wants bulk messaging for 3,000 customers',at:'Yesterday, 5:10 PM'},{i:'trend',t:'Stage moved to Qualified',s:'by Gunjan',at:'Yesterday, 5:12 PM'},{i:'clock',t:'Follow-up set',s:'Tomorrow, 11:00 AM · Share a demo slot',at:'Yesterday, 5:13 PM'}); }
+  }
+  return c.x;
+}
+function log(c,i,t,sub){ X(c).tl.unshift({i,t,s:sub||'by You',at:'Just now'}); }
+const QUICK=[['Price list','Our plans start at [YOUR PRICE] a month. Here is the full price list.'],['Book a demo','Sure! Which time works for a 15-minute demo, today 5 PM or tomorrow 11 AM?'],['Brochure','Here is our brochure with all features. [Document]']];
+const TEMPLATES=[{name:'Demo reminder',cat:'Utility',rate:0.13,body:'Hi {name}, your demo is on {date}. Reply YES to confirm.'},{name:'Follow-up check-in',cat:'Marketing',rate:0.86,body:'Hi {name}, still interested in Simple Floww? We can set it up today.'},{name:'Price list',cat:'Marketing',rate:0.86,body:'Hi {name}, here is our latest price list. [Document]'}];
+const S={screen:'login',stack:[],chat:'NV',chatsTab:'waiting',leadsView:'all',online:true,privacy:false,ai:{},sheet:null,tpl:0,fuWhen:1,fuType:0,amt:1000,
+  bots:[true,true,false,false],readAll:false,helpTab:'chat',help:[{me:1,t:'Why was my template rejected?'},{t:'Most common reasons: it starts or ends with a variable like {{1}}, a variable has no sample value, or an offer was sent as Utility.',who:'Simple Floww AI'}],human:false,
+  follow:[{id:'f1',g:'Overdue',c:'AG',when:'2 days',note:'Send the price list'},{id:'f2',g:'Overdue',c:'SR',when:'Yesterday',note:'Reply to the photo'},{id:'f3',g:'Today',c:'RJ',when:'4:00 PM',note:'Chatbot demo'},{id:'f4',g:'Today',c:'KM',when:'6:30 PM',note:'Confirm the demo'},{id:'f5',g:'Tomorrow',c:'NV',when:'11:00 AM',note:'Share a demo slot'}],
+  toast:null, wallet:428.32,
+  setup:{num:false,test:false,welcome:false}, setupHidden:false, fb:0, fbd:{mode:'new',biz:'existing',bizName:'',site:'',waba:'new',name:'Simple Floww',cat:'Professional services',phone:'',via:'sms',code:''},
+  test:{to:'',st:0,reply:false}, welcomeOn:true, welcomeText:'Hi! Thanks for messaging Simple Floww. How can we help you today?'};
+const setupDone=()=>['num','test','welcome'].filter(k=>S.setup[k]).length;
+const phone=p=>S.privacy?p.slice(0,7)+'XXX XX'+p.slice(-3):p;
+
+// ---------- navigation ----------
+const TABS=['home','chats','leads','followups','more'];
+function go(s,opts={}){ if(TABS.includes(s)) S.stack=[]; else S.stack.push(S.screen); S.screen=s; S.sheet=null; Object.assign(S,opts); render(true); }
+function back(){ S.sheet=null; S.screen=S.stack.pop()||'home'; render(true); }
+let tt; function toast(t){ S.toast=t; render(); clearTimeout(tt); tt=setTimeout(()=>{S.toast=null;render();},2200); }
+
+// ---------- pieces ----------
+const topbar=(title,right='',sub='')=>`<div class="top"><button class="iconbtn" data-a="back" aria-label="Back">${ic('back')}</button><div style="flex:1;min-width:0"><h1>${title}</h1>${sub?`<div class="muted" style="font-size:12.5px">${sub}</div>`:''}</div>${right}</div>`;
+function tabbar(){
+  const items=[['home','Home','home'],['chats','Chats','chat',ORDER.filter(k=>CHATS[k].unread).reduce((a,k)=>a+CHATS[k].unread,0)],['leads','Leads','users'],['followups','Follow-ups','clock',S.follow.filter(f=>f.g!=='Tomorrow').length],['more','More','more']];
+  const cur = S.screen==='chat'||S.screen==='newchat'?'chats':S.screen==='lead'?'leads':S.screen;
+  return `<nav class="tabbar" aria-label="Main">${items.map(([id,l,i,b])=>`<button class="${cur===id?'on':''}" data-a="go" data-v="${id}">${ic(i,24)}<span>${l}</span>${b?`<span class="b">${b}</span>`:''}</button>`).join('')}</nav>`;
+}
+
+// ---------- screens ----------
+function login(){
+  return `<div class="body" style="background:linear-gradient(160deg,#e7eafe 0%,#def8fe 100%);padding:64px 24px 32px;display:flex;flex-direction:column;gap:26px">
+    <div class="stack" style="gap:10px"><span style="font-family:var(--fd);font-size:22px;font-weight:800">Simple Floww</span><span style="height:4px;width:56px;border-radius:4px;background:linear-gradient(135deg,#0a1ef5,#06d6fa)"></span></div>
+    <div class="stack" style="gap:8px"><h1 style="margin:0;font-family:var(--fd);font-size:30px;line-height:1.15;font-weight:800;letter-spacing:-.6px">Reply to every lead, from your phone</h1><p style="margin:0;color:var(--slate);font-size:15px">This is a demo. Tap Send OTP to look around. Any number works.</p></div>
+    <form id="loginf" class="card stack" style="padding:22px;gap:14px;border:0;border-radius:22px;box-shadow:0 20px 40px -24px rgba(10,15,71,.35)">
+      <label for="mob" class="lbl" style="margin:0">Mobile number</label>
+      <div class="row" style="border:1px solid #cfd7f0;border-radius:14px;padding:0 14px;min-height:52px"><b class="muted">+91</b><input id="mob" inputmode="numeric" placeholder="98XXX XXXXX" style="border:0;outline:none;flex:1;min-width:0;font-size:16px;background:transparent"></div>
+      <button class="btn btn-p" type="submit" style="min-height:52px;font-size:16px">Send OTP</button>
+      <div class="row muted" style="font-size:13px"><span style="flex:1;height:1px;background:var(--line)"></span>or<span style="flex:1;height:1px;background:var(--line)"></span></div>
+      <button class="btn" type="button" data-a="login">Log in with email</button>
+    </form>
+    <div style="margin-top:auto;text-align:center" class="stack"><span class="muted">New to Simple Floww? <button data-a="login" style="border:0;background:none;color:var(--blue);font-weight:700;padding:0">Start free trial</button></span><span class="muted" style="font-size:12px;margin-top:6px">Demo · any number works · nothing is sent</span></div>
+  </div>`;
+}
+function otp(){
+  return `${topbar('Enter OTP')}<form id="otpf" class="body pad stack" style="gap:16px">
+    <p style="margin:0" class="muted">We sent a 6-digit code to your mobile. (Demo: type any 6 digits.)</p>
+    <input id="otp" class="field" inputmode="numeric" maxlength="6" placeholder="• • • • • •" style="letter-spacing:10px;text-align:center;font-size:22px">
+    <button class="btn btn-p" type="submit" style="min-height:52px">Verify and continue</button>
+    <span class="muted" style="text-align:center;font-size:13px">Resend code in 0:25</span></form>`;
+}
+function home(){
+  const waiting=ORDER.filter(k=>CHATS[k].waiting);
+  const today=S.follow.filter(f=>f.g==='Today');
+  const nxt=today[0];
+  return `<div class="body pad stack" style="gap:16px;padding-top:44px">
+    <div class="row" style="justify-content:space-between"><div><div class="muted" style="font-size:13px">Friday, 14 Nov</div><h1 class="big-title" style="font-size:24px">Good morning, Abhinandan</h1></div>
+      <button class="iconbtn box" data-a="go" data-v="notifications" aria-label="Notifications">${ic('bell')}${S.readAll?'':'<span style="position:absolute;top:9px;right:10px;width:9px;height:9px;border-radius:999px;background:#e5484d;border:2px solid #fff"></span>'}</button></div>
+    ${setupCard()}
+    <button class="card row" style="padding:10px 14px;text-align:left" data-a="go" data-v="more"><span style="width:10px;height:10px;border-radius:999px;background:${S.online?'var(--green)':'#c3c9dc'}"></span><span style="flex:1"><b>${S.online?'You\'re online.':'You\'re away.'}</b> ${S.online?'New chats can come to you.':'New chats skip you.'}</span><span style="color:var(--blue);font-weight:600;font-size:13px">Change</span></button>
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px">
+      <button class="card stack" style="padding:14px 12px;text-align:left;gap:2px" data-a="go" data-v="chats" data-tab="waiting"><b style="font-family:var(--fd);font-size:28px;color:#b25e00">${waiting.length}</b><span style="font-size:12.5px;font-weight:600">Awaiting reply</span></button>
+      <button class="card stack" style="padding:14px 12px;text-align:left;gap:2px" data-a="go" data-v="followups"><b style="font-family:var(--fd);font-size:28px">${today.length}</b><span style="font-size:12.5px;font-weight:600">Follow-ups today</span></button>
+      <button class="card stack" style="padding:14px 12px;text-align:left;gap:2px" data-a="go" data-v="leads"><b style="font-family:var(--fd);font-size:28px">6</b><span style="font-size:12.5px;font-weight:600">New leads today</span></button>
+    </div>
+    ${nxt?`<div class="stack" style="background:var(--navy);color:#fff;border-radius:18px;padding:16px;gap:12px">
+      <div class="row" style="justify-content:space-between"><span style="font-size:12px;font-weight:700;letter-spacing:1px;color:#b8c2e6">NEXT FOLLOW-UP · ${nxt.when}</span></div>
+      <div><div style="font-family:var(--fd);font-size:18px;font-weight:700">${CHATS[nxt.c].name}</div><div style="font-size:13.5px;color:#b8c2e6">${nxt.note} · ${CHATS[nxt.c].stage}</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="btn" style="background:transparent;color:#fff;border-color:rgba(255,255,255,.3)" data-a="call" data-v="${nxt.c}">${ic('phone',18)}Call</button><button class="btn btn-g" data-a="open" data-v="${nxt.c}">${ic('chat',18)}Open chat</button></div></div>`:''}
+    <div class="row" style="justify-content:space-between"><h2 style="margin:0;font-family:var(--fd);font-size:17px">Waiting for your reply</h2><button style="border:0;background:none;color:var(--blue);font-weight:600" data-a="go" data-v="chats">See all</button></div>
+    <div class="card" style="overflow:hidden">${waiting.slice(0,3).map(k=>{const c=CHATS[k];const last=c.msgs[c.msgs.length-1];return `<button class="list-row" style="align-items:center" data-a="open" data-v="${k}"><span class="av" style="width:40px;height:40px;font-size:13px">${c.ini}</span><span style="flex:1;min-width:0"><b style="display:block;font-weight:600">${c.name}</b><span class="muted" style="display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${last.o&&last.bot?'Only the bot replied':esc(last.t)}</span></span><span class="pill p-warn">${c.time}</span></button>`}).join('')}</div>
+  </div>${tabbar()}`;
+}
+function chats(){
+  const defs=[['waiting','Awaiting reply',c=>c.waiting],['unread','Unread',c=>c.unread>0],['mine','Mine',c=>c.mine],['un','Unassigned',c=>c.un],['all','All',()=>true]];
+  const cur=defs.find(d=>d[0]===S.chatsTab)||defs[0];
+  const list=ORDER.filter(k=>cur[2](CHATS[k]));
+  return `<div style="padding:44px 16px 10px;background:#fff;border-bottom:1px solid var(--line2);flex:none" class="stack">
+      <div class="row" style="justify-content:space-between;margin-bottom:10px"><h1 class="big-title">Chats</h1><button class="iconbtn box" aria-label="Filter" data-a="toast" data-v="Filter by WhatsApp number or tag">${ic('filter',20)}</button></div>
+      <label class="search" style="margin-bottom:10px">${ic('search',18)}<input id="chatq" placeholder="Search name, number or message" aria-label="Search chats"></label>
+      <div class="chips">${defs.map(([id,l,f])=>`<button class="chip${id===cur[0]?' on':''}" data-a="ctab" data-v="${id}">${l}<span class="n">${ORDER.filter(k=>f(CHATS[k])).length}</span></button>`).join('')}</div></div>
+    <div class="body" style="background:#fff">${list.map(k=>{const c=CHATS[k];const last=c.msgs[c.msgs.length-1];const prev=(last.o?(last.bot?'':'You: '):'')+last.t;return `<button class="list-row" data-a="open" data-v="${k}">
+        <span class="av" style="width:48px;height:48px;font-size:14px">${c.ini}</span>
+        <span class="stack" style="flex:1;min-width:0;gap:3px">
+          <span class="row" style="justify-content:space-between"><b style="font-weight:600;font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.name}</b><span style="font-size:12px;${c.unread?'color:var(--blue);font-weight:600':'color:var(--slate)'}">${c.time}</span></span>
+          <span class="row" style="gap:6px">${last.o&&last.bot?'<span class="pill p-cyan" style="font-size:10.5px;padding:1px 6px">BOT</span>':''}<span class="muted" style="flex:1;min-width:0;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(prev)}</span>${c.unread?`<span class="pill" style="background:var(--blue);color:#fff">${c.unread}</span>`:''}</span>
+          <span class="row" style="gap:6px"><span class="pill p-grey" style="font-weight:500">${c.owner}</span>${c.waiting?'<span class="pill p-warn">Awaiting reply</span>':''}${c.closed?'<span class="pill p-bad">24 h closed</span>':''}</span>
+        </span></button>`}).join('')||'<p class="muted pad">No chats here.</p>'}</div>
+    <button class="fab" data-a="go" data-v="newchat" aria-label="New chat">${ic('plus',24,2)}</button>${tabbar()}`;
+}
+function chat(){
+  const c=CHATS[S.chat];
+  const bub=m=>m.o
+    ?`<div class="bubble b-out">${m.bot?'<span class="bot">BOT</span><div style="margin-top:4px">':'<div>'}${esc(m.t)}</div><div class="b-time">${m.at} ✓✓</div></div>`
+    :`<div class="bubble b-in">${m.re?`<div style="font-size:12px;color:var(--slate);border-left:3px solid var(--blue);padding-left:8px;margin-bottom:4px">Replied to: ${esc(m.re)}</div><b style="font-weight:600">${esc(m.t)}</b>`:esc(m.t)}<div class="b-time">${m.at}</div></div>`;
+  const last=c.msgs[c.msgs.length-1];
+  return `<div class="top" style="padding-left:6px"><button class="iconbtn" data-a="back" aria-label="Back">${ic('back')}</button>
+      <button class="row" style="flex:1;min-width:0;border:0;background:none;text-align:left;padding:0" data-a="go" data-v="lead"><span class="av" style="width:40px;height:40px;font-size:13px">${c.ini}</span><span style="min-width:0"><b style="display:block;font-size:16px;font-weight:600">${c.name}</b><span class="muted" style="font-size:12.5px;white-space:nowrap">${c.stage} · ${c.owner} · tap for details</span></span></button>
+      <button class="iconbtn" aria-label="Call" data-a="call" data-v="${S.chat}">${ic('phone',21)}</button></div>
+    ${c.closed?`<div style="background:var(--bad-bg);color:#7a1520;font-size:12.5px;font-weight:600;padding:7px 16px;flex:none">Free reply window closed. Send a template to restart.</div>`:`<div style="background:var(--ok-bg);color:var(--ok);font-size:12.5px;font-weight:600;padding:7px 16px;flex:none" class="row"><span style="flex:1">Free reply window: 23 h left</span><span>AI auto-reply ${S.ai[S.chat]?'on':'off'}</span></div>`}
+    <div class="body stack" id="thread" style="background:var(--chat);padding:14px;gap:10px">${c.msgs.map(bub).join('')}
+      ${!last.o&&c.waiting?'<div style="align-self:center;background:var(--warn-bg);color:#5c3200;border-radius:999px;padding:6px 14px;font-size:12.5px;font-weight:600">Customer is waiting · no one has replied yet</div>':''}</div>
+    ${c.closed?`<div style="background:#fff;border-top:1px solid var(--line);padding:12px 16px 26px;flex:none"><button class="btn btn-p" style="width:100%;min-height:50px" data-a="sheet" data-v="template">Send a template</button></div>`:`
+    <form id="sendf" style="background:#fff;border-top:1px solid var(--line);padding:10px 12px 24px;flex:none" class="stack">
+      <div class="chips" style="margin-bottom:8px"><span class="muted" style="font-size:12px;font-weight:600;align-self:center;flex:none">Quick replies</span>${QUICK.map(([l],i)=>`<button type="button" class="chip" style="min-height:34px;padding:6px 12px;font-size:13px;background:var(--cloud)" data-a="quick" data-v="${i}">${l}</button>`).join('')}</div>
+      <div class="row" style="gap:8px"><button type="button" class="iconbtn" style="background:var(--cloud);border-radius:999px" aria-label="Attach or send template" data-a="sheet" data-v="template">${ic('plus',22,2)}</button>
+        <input id="msg" autocomplete="off" placeholder="Message" aria-label="Message" style="flex:1;min-width:0;background:var(--cloud);border:0;border-radius:22px;min-height:44px;padding:0 14px;font-size:15px;outline:none">
+        <button type="submit" class="iconbtn" style="background:var(--blue);color:#fff;border-radius:999px" aria-label="Send">${ic('send',20,2)}</button></div>
+    </form>`}
+    ${S.sheet==='template'?templateSheet():''}`;
+}
+function templateSheet(){
+  const c=CHATS[S.chat], t=TEMPLATES[S.tpl];
+  return `<div class="scrim" data-a="closesheet"></div><div class="sheet" role="dialog" aria-label="Send a template"><span class="grab"></span>
+    <div><h2 style="margin:0;font-family:var(--fd);font-size:19px">Send a template</h2><p style="margin:4px 0 0" class="muted">${c.closed?'WhatsApp allows free replies only for 24 hours after the customer\'s last message. Use an approved template to restart.':'Pick an approved template.'}</p></div>
+    ${TEMPLATES.map((x,i)=>`<button class="opt${S.tpl===i?' on':''}" data-a="tpl" data-v="${i}"><span class="row" style="justify-content:space-between"><b style="font-weight:600">${x.name}</b><span class="pill ${x.cat==='Utility'?'p-cyan':'p-blue'}">${x.cat}</span></span><span class="muted" style="display:block;font-size:13px;margin-top:4px">${esc(x.body.replace('{name}',c.name.split(' ')[0]))}</span></button>`).join('')}
+    <div class="row muted" style="justify-content:space-between;font-size:13px"><span>Cost: about ₹${t.rate} (example rate)</span><span>Wallet ${money(S.wallet)}</span></div>
+    <button class="btn btn-p" style="min-height:52px" data-a="sendtpl">Send template</button></div>`;
+}
+function lead(){
+  const c=CHATS[S.chat], x=X(c), idx=STAGES.indexOf(c.stage), tab=S.cpTab||'timeline';
+  const won=c.stage==='Won', lost=c.stage==='Lost', nextSt=STAGES[idx+1];
+  const reminders=S.follow.filter(f=>f.c===S.chat);
+  const tabs=[['timeline','Timeline'],['calls','Calls'],['reminders','Reminders'],['fields','Fields']];
+  let pane='';
+  if(tab==='timeline') pane=`<form id="tlf" class="row" style="gap:8px"><input id="tlnote" class="field" style="min-height:44px;font-size:15px" placeholder="Add a note about this contact"><button class="btn btn-p" style="min-height:44px" aria-label="Save note">${ic('send',18)}</button></form>
+      <div>${x.tl.map(e=>`<div class="tl"><span class="d">${ic(e.i,15)}</span><span style="flex:1;min-width:0"><b style="font-weight:600;display:block">${esc(e.t)}</b>${e.s?`<span class="muted" style="font-size:13px;display:block">${esc(e.s)}</span>`:''}</span><span class="muted" style="font-size:12px;white-space:nowrap">${e.at}</span></div>`).join('')}</div>`;
+  if(tab==='calls') pane=`<button class="btn" data-a="sheet" data-v="calllog">${ic('phone',18)} Log a call</button>
+      <div>${x.calls.map(k=>`<div class="tl"><span class="d" style="${k.r==='Picked up'?'background:var(--ok-bg);color:var(--ok)':'background:var(--bad-bg);color:var(--bad)'}">${ic('phone',15)}</span><span style="flex:1;min-width:0"><b style="font-weight:600;display:block">${k.r}</b><span class="muted" style="font-size:13px;display:block">${k.n?esc(k.n)+' · ':''}${k.by}</span></span><span class="muted" style="font-size:12px;white-space:nowrap">${k.at}</span></div>`).join('')||'<p class="muted" style="margin:4px 0 0;font-size:14px">No calls logged yet.</p>'}</div>`;
+  if(tab==='reminders') pane=`<button class="btn" data-a="sheet" data-v="followup">${ic('bell',18)} Add a reminder</button>
+      <div>${reminders.map(f=>`<div class="tl"><span class="d" style="${f.g==='Overdue'?'background:var(--bad-bg);color:var(--bad)':''}">${ic('clock',15)}</span><span style="flex:1;min-width:0"><b style="font-weight:600;display:block">${esc(f.note)}</b><span class="muted" style="font-size:13px;display:block;${f.g==='Overdue'?'color:var(--bad)':''}">${f.g} · ${f.when}</span></span><button class="btn" style="min-height:36px;padding:0 10px;font-size:13px" data-a="done" data-v="${f.id}">Done</button></div>`).join('')||'<p class="muted" style="margin:4px 0 0;font-size:14px">No reminders for this contact.</p>'}</div>`;
+  if(tab==='fields') pane=`<div>${[['Email',x.email],['Company',x.company],['City',x.city],['Budget',x.budget],['Lead source',c.src],['Created',c.time]].map(([k,v])=>`<div class="kv"><span class="muted">${k}</span><span>${v?esc(v):'<span class="muted" style="font-weight:400">Not set</span>'}</span></div>`).join('')}
+        <div class="kv" style="align-items:center"><span class="muted">AI auto-reply for this chat</span><button class="sw${S.ai[S.chat]?' on':''}" aria-label="AI auto-reply" data-a="ai"></button></div></div>
+      <button class="btn" data-a="sheet" data-v="edit">${ic('pencil',18)} Edit fields</button>`;
+  return `<div class="top" style="padding-left:6px"><button class="iconbtn" data-a="back" aria-label="Back">${ic('back')}</button>
+      <div style="flex:1;min-width:0"><h1 style="text-transform:uppercase;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(c.name)}</h1><div class="muted" style="font-size:12.5px">${phone(c.phone)}</div></div>
+      <button class="btn" style="min-height:40px;padding:0 12px;font-size:13.5px" data-a="sheet" data-v="edit">${ic('pencil',16)} Edit</button></div>
+    <div class="body pad stack cp-in" style="gap:12px;background:var(--cloud)">
+      <div class="card stack" style="padding:14px;gap:14px">
+        <div class="row" style="gap:12px;align-items:flex-start"><span class="av" style="width:52px;height:52px;font-size:17px;border-radius:14px;background:var(--blue);color:#fff">${c.ini}</span>
+          <div style="flex:1;min-width:0"><div style="font-family:var(--fd);font-size:17px;font-weight:700;text-transform:uppercase">${esc(c.name)}</div><div class="muted" style="font-size:13.5px">${phone(c.phone)}</div>
+            <div class="row" style="gap:6px;margin-top:6px;flex-wrap:wrap"><button class="pill p-grey" style="border:1px solid var(--line);font-size:12.5px;padding:4px 10px;gap:4px" data-a="sheet" data-v="assign">${ic('user',13)} ${c.owner} ▾</button><span class="pill p-blue" style="font-size:12.5px;padding:4px 10px">WhatsApp</span></div></div></div>
+        <div class="cp-acts">
+          <button class="btn" data-a="open" data-v="${S.chat}">${ic('chat',19)}Message</button>
+          <button class="btn" data-a="sheet" data-v="calllog">${ic('phone',19)}Call Log</button>
+          <button class="btn" data-a="email">${ic('mail',19)}Email</button>
+          <button class="btn btn-p" data-a="sheet" data-v="followup">${ic('bell',19)}Follow-up</button></div></div>
+      <div class="card stack" style="padding:14px;gap:14px">
+        <div class="row" style="justify-content:space-between"><span class="sec-h">PIPELINE</span><span class="pill ${STAGE_PILL[c.stage]}" style="font-size:12.5px;padding:4px 10px">${c.stage}</span></div>
+        <select id="pipe" class="field" style="min-height:42px;font-size:14.5px;padding:0 12px" aria-label="Pipeline"><option${x.pipe.startsWith('Sales')?' selected':''}>Sales Pipeline (Default)</option><option${x.pipe.startsWith('Support')?' selected':''}>Support Pipeline</option></select>
+        <div class="steps" id="steps">${STAGES.map((st,k)=>`<button class="step${k<idx&&!lost?' past':''}${k===idx&&x.inPipe?' cur':''}${st==='Won'?' won':''}${st==='Lost'?' lost':''}" data-a="stage" data-v="${st}" aria-label="Move to ${st}"><i></i>${st}</button>`).join('')}</div>
+        ${!x.inPipe?`<button class="btn btn-p" data-a="addpipe">${ic('plus',18)} Add to Sales Pipeline (New Lead)</button>`:won||lost?`<button class="btn" data-a="stage" data-v="New Lead">Reopen as New Lead</button>`:`<button class="btn btn-p" data-a="stage" data-v="${nextSt}">Move to ${nextSt} ›</button>`}
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="btn btn-won" data-a="stage" data-v="Won">${ic('check',18)} Mark Won</button><button class="btn btn-lost" data-a="stage" data-v="Lost">${ic('x',18)} Mark Lost</button></div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="card stack" style="padding:14px;gap:4px"><div class="row" style="justify-content:space-between"><span class="sec-h">REVENUE</span><button style="border:0;background:none;color:var(--blue);font-weight:600;padding:0" data-a="sheet" data-v="value">Edit</button></div>
+          <b style="font-family:var(--fd);font-size:22px">${money(x.value)}</b><span class="muted" style="font-size:12px">Estimated deal value</span></div>
+        <div class="card stack" style="padding:14px;gap:6px"><div class="row" style="justify-content:space-between"><span class="sec-h">WIN RATE</span><span style="color:var(--blue)">${ic('trend',16)}</span></div>
+          <b style="font-family:var(--fd);font-size:22px">${x.inPipe?WIN[c.stage]:0}%</b><span style="height:6px;border-radius:99px;background:var(--line2);overflow:hidden"><span style="display:block;height:100%;width:${x.inPipe?WIN[c.stage]:0}%;background:${won?'var(--ok)':'var(--blue)'}"></span></span></div></div>
+      <div class="card stack" style="padding:14px;gap:10px"><div class="row" style="justify-content:space-between"><span class="row" style="gap:6px"><span style="color:var(--slate)">${ic('tag',16)}</span><span class="sec-h">TAGS</span></span><button style="border:0;background:none;color:var(--blue);font-weight:600;padding:0" data-a="sheet" data-v="tags">+ Manage Tags</button></div>
+        ${c.tags.length?`<div class="row" style="flex-wrap:wrap;gap:6px">${c.tags.map(t=>`<span class="pill p-blue" style="font-size:12.5px;padding:4px 10px">${t}</span>`).join('')}</div>`:'<i class="muted" style="font-size:14px">No tags assigned to this contact.</i>'}</div>
+      <div class="card stack" style="padding:12px;gap:12px">
+        <div class="seg4" role="tablist">${tabs.map(([id,l])=>`<button class="${tab===id?'on':''}" role="tab" aria-selected="${tab===id}" data-a="cptab" data-v="${id}">${l}${id==='calls'&&x.calls.length?' '+x.calls.length:''}${id==='reminders'&&reminders.length?' '+reminders.length:''}</button>`).join('')}</div>
+        ${pane}</div>
+    </div>${cpSheet()}`;
+}
+function cpSheet(){
+  const c=CHATS[S.chat], x=X(c), sh=S.sheet;
+  const wrap=(title,sub,body)=>`<div class="scrim" data-a="closesheet"></div><div class="sheet" role="dialog" aria-label="${title}"><span class="grab"></span><div><h2 style="margin:0;font-family:var(--fd);font-size:19px">${title}</h2>${sub?`<span class="muted" style="font-size:13px">${sub}</span>`:''}</div>${body}</div>`;
+  if(sh==='followup') return followSheet();
+  if(sh==='assign') return wrap('Assign lead','Who looks after '+esc(c.name)+'?',`<div class="stack" style="gap:8px">${OWNERS.map(o=>`<button class="opt${c.owner===o?' on':''}" data-a="assign" data-v="${o}"><b style="font-weight:600">${o}</b></button>`).join('')}</div>`);
+  if(sh==='calllog') return wrap('Log a call',phone(c.phone),`<div><span class="lbl">Result</span><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${['Picked up','No answer','Busy','Call back later'].map((r,k)=>`<button class="opt${(S.callR||0)===k?' on':''}" data-a="callr" data-v="${k}"><b style="font-weight:600">${r}</b></button>`).join('')}</div></div>
+      <label><span class="lbl">Note</span><input id="callnote" class="field" placeholder="What did they say?"></label>
+      <button class="btn btn-p" style="min-height:52px" data-a="savecall">Save call</button>`);
+  if(sh==='value') return wrap('Deal value','Estimated revenue from this lead',`<label><span class="lbl">Amount (₹)</span><input id="dealv" class="field" inputmode="numeric" value="${x.value||''}" placeholder="25000"></label><button class="btn btn-p" style="min-height:52px" data-a="savevalue">Save</button>`);
+  if(sh==='tags') return wrap('Manage tags','',`<div class="row" style="flex-wrap:wrap;gap:8px">${ALLTAGS.map(t=>`<button class="chip${c.tags.includes(t)?' on':''}" data-a="tagtog" data-v="${t}">${t}</button>`).join('')}</div><button class="btn btn-p" style="min-height:52px" data-a="closesheet">Done</button>`);
+  if(sh==='edit') return wrap('Edit profile','',`<form id="editf" class="stack" style="gap:12px">${[['name','Name',c.name],['email','Email',x.email],['company','Company',x.company],['city','City',x.city],['budget','Budget',x.budget]].map(([k,l,v])=>`<label><span class="lbl">${l}</span><input name="${k}" class="field" value="${esc(v)}"></label>`).join('')}
+      <button class="btn btn-p" style="min-height:52px">Save</button></form>`);
+  return '';
+}
+function followSheet(){
+  const c=CHATS[S.chat];
+  const whens=[['In 1 hour','5:00 PM'],['Tomorrow','11:00 AM'],['In 3 days','Mon, 11:00 AM'],['Next week','Fri, 11:00 AM']];
+  return `<div class="scrim" data-a="closesheet"></div><div class="sheet" role="dialog" aria-label="Set a follow-up or reminder"><span class="grab"></span>
+    <div><h2 style="margin:0;font-family:var(--fd);font-size:19px">Follow up with ${c.name}</h2><span class="muted" style="font-size:13px">You get an alert before it is due</span></div>
+    <div><span class="lbl">When</span><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${whens.map(([l,s],i)=>`<button class="opt${S.fuWhen===i?' on':''}" data-a="fuwhen" data-v="${i}"><b style="display:block;font-weight:600">${l}</b><span class="muted" style="font-size:12px">${s}</span></button>`).join('')}</div></div>
+    <div><span class="lbl">Type</span><div class="row" style="gap:8px">${['Call','WhatsApp','Meeting','Reminder'].map((l,i)=>`<button class="chip${S.fuType===i?' on':''}" style="flex:1" data-a="futype" data-v="${i}">${l}</button>`).join('')}</div></div>
+    <label><span class="lbl">Note</span><input id="funote" class="field" value="${esc(c.note||'Call back')}"></label>
+    <button class="btn btn-p" style="min-height:52px" data-a="savefu">Save follow-up</button></div>`;
+}
+function leads(){
+  const defs=[['all','All',()=>true],['mine','Mine',c=>c.mine],['hot','Hot',c=>c.tags.includes('Hot lead')],['late','Missed',c=>c.late||c.next==='Not set']];
+  const cur=defs.find(d=>d[0]===S.leadsView)||defs[0];
+  const list=ORDER.filter(k=>cur[2](CHATS[k]));
+  return `<div style="padding:44px 16px 12px;background:#fff;border-bottom:1px solid var(--line2);flex:none" class="stack">
+      <h1 class="big-title" style="margin-bottom:10px">Leads</h1>
+      <label class="search" style="margin-bottom:10px">${ic('search',18)}<input placeholder="Search leads" aria-label="Search leads"></label>
+      <div class="chips">${defs.map(([id,l,f])=>`<button class="chip${id===cur[0]?' on':''}" data-a="lview" data-v="${id}">${l} · ${ORDER.filter(k=>f(CHATS[k])).length}</button>`).join('')}</div></div>
+    <div class="body pad stack" style="gap:10px">${list.map(k=>{const c=CHATS[k];const late=c.late||c.next==='Not set';return `<button class="card stack" style="padding:12px 14px;gap:6px;text-align:left" data-a="openlead" data-v="${k}">
+        <span class="row" style="justify-content:space-between;width:100%"><b style="font-weight:600;font-size:15.5px">${c.name}</b><span class="pill ${STAGE_PILL[c.stage]}">${c.stage}</span></span>
+        <span class="muted" style="font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%">${esc(c.msgs[c.msgs.length-1].t)}</span>
+        <span class="row" style="justify-content:space-between;width:100%;font-size:12.5px"><span class="muted">${c.owner}</span><span style="${late?'color:var(--bad);font-weight:600':''}">${c.next}</span></span></button>`}).join('')}</div>
+    <button class="fab" data-a="go" data-v="newchat" aria-label="Add a lead">${ic('plus',24,2)}</button>${tabbar()}`;
+}
+function followups(){
+  const groups=['Overdue','Today','Tomorrow'];
+  const col={Overdue:['var(--bad-bg)','var(--bad)'],Today:['var(--tint)','var(--blue)'],Tomorrow:['var(--cloud)','var(--slate)']};
+  const counts=groups.map(g=>S.follow.filter(f=>f.g===g).length);
+  return `<div style="padding:44px 16px 14px;background:#fff;border-bottom:1px solid var(--line2);flex:none"><h1 class="big-title">Follow-ups</h1><span class="muted" style="font-size:13.5px">${counts[0]} overdue · ${counts[1]} today · ${counts[2]} tomorrow</span></div>
+    <div class="body pad stack" style="gap:14px">${groups.map(g=>{const items=S.follow.filter(f=>f.g===g);if(!items.length)return '';return `<section class="stack" style="gap:8px"><h2 style="margin:0;font-family:var(--fd);font-size:15px;color:${col[g][1]}">${g}</h2>
+      ${items.map(f=>`<div class="card row" style="padding:12px 14px;gap:12px"><span style="flex:none;width:62px;text-align:center;font-size:12.5px;font-weight:700;border-radius:10px;padding:8px 4px;background:${col[g][0]};color:${col[g][1]}">${f.when}</span>
+        <button style="flex:1;min-width:0;border:0;background:none;text-align:left;padding:0" data-a="openlead" data-v="${f.c}"><b style="display:block;font-weight:600">${CHATS[f.c].name}</b><span class="muted" style="font-size:13px">${f.note}</span></button>
+        <button class="iconbtn" style="background:var(--cloud);width:40px;height:40px" aria-label="Open chat" data-a="open" data-v="${f.c}">${ic('chat',18)}</button>
+        <button class="iconbtn" style="background:var(--green);width:40px;height:40px" aria-label="Mark done" data-a="done" data-v="${f.id}">${ic('check',18,2.4)}</button></div>`).join('')}</section>`}).join('')||'<p class="muted" style="text-align:center">All done for now.</p>'}</div>${tabbar()}`;
+}
+function notifications(){
+  const items=[['DUE','#fff1de','#8a4b00','Follow-up in 5 minutes','Rohit Jain · Chatbot demo at 4:00 PM','3:55 PM','followups'],['NEW','#e7eafe','#0a1ef5','New lead assigned to you','Rohit Jain from your website','3:46 PM','RJ'],['WAIT','#fde8ea','#a3262f','Customer waiting 10 minutes','Neha Verma: "What is the monthly price?"','11:53 AM','NV'],['OK','#e3f9eb','#0b6b34','Template approved','"Demo reminder" is ready to use','10:20 AM','campaigns'],['SENT','#def8fe','#0a0f47','Campaign finished','Dussehra offer · 55% read · 6% replied','9:02 AM','campaigns'],['₹','#f4f8ff','#0a0f47','Wallet balance is low',money(S.wallet)+' left','8:30 AM','recharge']];
+  return `${topbar('Notifications',`<button style="border:0;background:none;color:var(--blue);font-weight:600" data-a="readall">Mark all read</button>`)}
+    <div class="body pad stack" style="gap:8px"><span class="sec-h">TODAY</span>${items.map(([tag,bg,c,t,b,w,to],i)=>`<button class="card row" style="align-items:flex-start;padding:12px 14px;gap:12px;text-align:left;${!S.readAll&&i<3?'border-color:#c9d3ff':'opacity:.85'}" data-a="${/^[A-Z]{2}$/.test(to)?'open':'go'}" data-v="${to}">
+      <span style="width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex:none;background:${bg};color:${c}">${tag}</span>
+      <span class="stack" style="flex:1;min-width:0;gap:2px"><b style="font-weight:600">${t}</b><span class="muted" style="font-size:13px">${esc(b)}</span></span><span class="muted" style="font-size:11.5px;flex:none">${w}</span></button>`).join('')}</div>`;
+}
+function setupCard(){
+  const n=setupDone();
+  if(n===3) return S.setupHidden?'':`<div class="card row" style="padding:12px 14px;background:var(--ok-bg);border-color:#bfe8d3"><span style="width:34px;height:34px;border-radius:999px;background:var(--green);color:var(--navy);display:flex;align-items:center;justify-content:center;flex:none">${ic('check',18,2.4)}</span><span style="flex:1;min-width:0"><b style="display:block;color:var(--ok)">You're all set</b><span style="font-size:13px;color:#0b4d27">${esc(S.fbd.name)} · ${esc(S.fbd.phone)} is live</span></span><button class="iconbtn" style="width:34px;height:34px;color:var(--ok)" data-a="hidesetup" aria-label="Hide">${ic('x',18)}</button></div>`;
+  const steps=[['num','Connect your number','Log in with Facebook and verify your number','connect'],['test','Send a test message','Check that messages reach WhatsApp','testmsg'],['welcome','Turn on a welcome message','Auto-reply to new customers','welcome']];
+  const cur=steps.find(x=>!S.setup[x[0]]);
+  return `<div class="setup">
+    <div class="row" style="justify-content:space-between;align-items:flex-start"><div><span style="font-size:12px;font-weight:700;letter-spacing:1px;color:#b8c2e6">${S.setup.num?'ALMOST THERE':'GET STARTED'}</span>
+      <div style="font-family:var(--fd);font-size:19px;font-weight:700;margin-top:2px">${S.setup.num?'Finish setting up WhatsApp':'Connect your WhatsApp number'}</div>
+      <div style="font-size:13px;color:#cdd4f2">${S.setup.num?'Your number is connected. '+(3-n)+' quick step'+(3-n>1?'s':'')+' left.':'You can\'t send or receive messages yet. It takes about 5 minutes.'}</div></div>
+      <b style="font-size:13px;white-space:nowrap;background:rgba(255,255,255,.12);border-radius:999px;padding:3px 10px">${n} of 3</b></div>
+    <div class="bar"><span style="width:${Math.max(n/3*100,4)}%"></span></div>
+    <div class="stack" style="gap:8px">${steps.map(([k,t,sub,to],i)=>{const done=S.setup[k], on=cur&&cur[0]===k;return `<button class="sstep${done?' done':''}${on?' cur':''}" data-a="go" data-v="${to}" ${done&&k==='num'?'disabled':''}><span class="n">${done?ic('check',16,2.6):i+1}</span><span style="flex:1;min-width:0"><b style="display:block;font-weight:700;font-size:14.5px">${t}</b><span style="font-size:12.5px;${on?'color:var(--slate)':'color:#b8c2e6'}">${done?'Done':sub}</span></span>${on?`<span style="color:var(--blue)">${ic('chev',18)}</span>`:''}</button>`}).join('')}</div>
+    ${!S.setup.num?`<button class="btn btn-fb" style="min-height:50px" data-a="go" data-v="connect"><b style="font-family:Arial,sans-serif;font-size:20px;line-height:1">f</b> Connect with Facebook</button>`:''}
+  </div>`;
+}
+
+// ---------- onboarding: connect number ----------
+function connect(){
+  const d=S.fbd;
+  return `${topbar('Connect WhatsApp','', 'Step 1 of 3')}<div class="body pad stack" style="gap:14px">
+    <div class="card stack" style="padding:16px;gap:12px"><b style="font-family:var(--fd);font-size:17px">Which number do you want to use?</b>
+      ${[['new','A new number','Not used on any WhatsApp app right now. Best for most businesses.'],['app','My WhatsApp Business app number','Keep using the app on your phone too. Recent chats can come with it.']].map(([v,t,sub])=>`<button class="opt${d.mode===v?' on':''}" data-a="fbmode" data-v="${v}"><b style="display:block;font-weight:600">${t}</b><span class="muted" style="font-size:13px">${sub}</span></button>`).join('')}
+      <div style="background:var(--warn-bg);color:#5c3200;border-radius:12px;padding:10px 12px;font-size:13px">Using this number on <b>personal</b> WhatsApp? Delete that WhatsApp account first, or use a different number.</div></div>
+    <div class="card stack" style="padding:16px;gap:12px"><b style="font-family:var(--fd);font-size:17px">Keep these ready</b>
+      ${[['user','Your Facebook login','The account that manages your business on Facebook'],['sim','The phone with this number','To get a 6-digit code by SMS or call'],['globe','Business name and website','Website is optional. The name shows to customers.']].map(([i,t,sub])=>`<div class="need"><span class="d">${ic(i,17)}</span><span><b style="display:block;font-weight:600">${t}</b><span class="muted" style="font-size:13px">${sub}</span></span></div>`).join('')}</div>
+    <button class="btn btn-fb" style="min-height:54px;font-size:16px" data-a="fbstart"><b style="font-family:Arial,sans-serif;font-size:22px;line-height:1">f</b> Continue with Facebook</button>
+    <p class="muted row" style="margin:0;font-size:12.5px;justify-content:center;gap:6px">${ic('lock',14)} You log in on Facebook's own page. Simple Floww never sees your password.</p>
+    <button style="border:0;background:none;color:var(--blue);font-weight:600;min-height:40px" data-a="go" data-v="help">Need help? Our team can set it up with you</button>
+  </div>`;
+}
+function fbflow(){
+  const d=S.fbd, st=S.fb, total=6;
+  const titles=['Log in','Business portfolio','WhatsApp Business profile','Add your phone number','Verify your number','Review and confirm'];
+  let body='';
+  if(st===0) body=`<div class="stack" style="align-items:center;gap:10px;padding:18px 0 6px;text-align:center"><span class="av" style="width:72px;height:72px;font-size:24px;background:var(--navy);color:#fff">AK</span><b style="font-size:18px">Abhinandan Kumar</b><span class="muted" style="font-size:14px">Simple Floww wants to connect to your WhatsApp Business account</span></div>
+      <button class="btn btn-fb" style="min-height:52px" data-a="fbnext">Continue as Abhinandan</button>
+      <button class="btn" data-a="toast" data-v="Facebook asks you to log in with another account here">Log in with another account</button>`;
+  if(st===1) body=`<p class="muted" style="margin:0;font-size:14px">Choose the business this WhatsApp number belongs to.</p>
+      ${[['existing','Simple Floww Demo Pvt Ltd','Business portfolio · Verified'],['create','Create a new business portfolio','For a new business']].map(([v,t,sub])=>`<button class="opt${d.biz===v?' on':''}" data-a="fbbiz" data-v="${v}"><b style="display:block;font-weight:600">${t}</b><span class="muted" style="font-size:13px">${sub}</span></button>`).join('')}
+      ${d.biz==='create'?`<label><span class="lbl">Business name</span><input id="fbbizname" class="field" value="${esc(d.bizName)}" placeholder="As on your GST or shop licence"></label><label><span class="lbl">Website (optional)</span><input id="fbsite" class="field" value="${esc(d.site)}" placeholder="www.yourbusiness.com"></label>`:''}
+      <button class="btn btn-fb" style="min-height:52px" data-a="fbnext">Next</button>`;
+  if(st===2) body=`<label><span class="lbl">Display name</span><input id="fbname" class="field" value="${esc(d.name)}"><span class="muted" style="font-size:12.5px;display:block;margin-top:6px">Customers see this name. It should match your business name. Meta reviews it.</span></label>
+      <label><span class="lbl">Category</span><select id="fbcat" class="field">${['Professional services','Retail','Education','Health and medical','Real estate','Restaurant','Beauty and salon','Travel','Other'].map(c=>`<option${d.cat===c?' selected':''}>${c}</option>`).join('')}</select></label>
+      <button class="btn btn-fb" style="min-height:52px" data-a="fbnext">Next</button>`;
+  if(st===3) body=`<label><span class="lbl">Phone number</span><span class="row field"><b class="muted">+91</b><input id="fbphone" inputmode="numeric" maxlength="11" value="${esc(d.phone.replace('+91 ',''))}" placeholder="98XXX XXXXX" style="border:0;outline:none;flex:1;min-width:0;font-size:16px;background:transparent"></span></label>
+      ${d.mode==='app'?`<div style="background:var(--tint2);border-radius:12px;padding:10px 12px;font-size:13.5px">We'll send a code to the WhatsApp Business app on this phone. Keep the app open.</div>`:`<div><span class="lbl">Get the code by</span><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${[['sms','Text message'],['call','Phone call']].map(([v,l])=>`<button class="opt${d.via===v?' on':''}" data-a="fbvia" data-v="${v}"><b style="font-weight:600">${l}</b></button>`).join('')}</div></div>`}
+      <button class="btn btn-fb" style="min-height:52px" data-a="fbnext">Send code</button>`;
+  if(st===4) body=`<p style="margin:0;font-size:14.5px">Enter the 6-digit code sent to <b>${esc(d.phone)}</b>${d.mode==='app'?' in your WhatsApp Business app':d.via==='call'?' by phone call':' by SMS'}.</p>
+      <input id="fbcode" class="field otp" inputmode="numeric" maxlength="6" placeholder="••••••" value="${esc(d.code)}" aria-label="6-digit code">
+      <span class="muted" style="font-size:12.5px;text-align:center">Demo: type any 6 digits</span>
+      <button class="btn btn-fb" style="min-height:52px" data-a="fbnext">Verify</button>
+      <button style="border:0;background:none;color:#1877f2;font-weight:600;min-height:40px" data-a="toast" data-v="New code sent">Didn't get it? Send again</button>`;
+  if(st===5) body=`<div class="card stack" style="padding:14px;gap:4px">${[['Business',d.biz==='create'?(d.bizName||'New business'):'Simple Floww Demo Pvt Ltd'],['Display name',d.name],['Phone number',d.phone],['Category',d.cat]].map(([k,v])=>`<div class="kv"><span class="muted">${k}</span><span>${esc(v)}</span></div>`).join('')}</div>
+      <div class="stack" style="gap:8px"><b style="font-size:14.5px">Simple Floww will be able to</b>${['Manage your WhatsApp Business account','Send and receive messages for you','Create and send message templates'].map(t=>`<span class="row" style="gap:8px;font-size:14px"><span style="color:var(--ok)">${ic('check',16,2.4)}</span>${t}</span>`).join('')}</div>
+      <button class="btn btn-fb" style="min-height:52px" data-a="fbnext">Confirm and connect</button>`;
+  if(st===6) body=`<div class="stack" style="align-items:center;gap:14px;padding:60px 0;text-align:center"><span style="width:44px;height:44px;border-radius:999px;border:4px solid var(--line);border-top-color:#1877f2;animation:spin 1s linear infinite"></span><b>Connecting your number…</b><span class="muted" style="font-size:13.5px">This takes a few seconds</span></div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>`;
+  return `<div class="fbtop"><button class="iconbtn" data-a="fbclose" aria-label="Close">${ic('x')}</button><div style="flex:1;min-width:0"><b style="display:block;font-size:15px">WhatsApp Business setup</b><span class="muted row" style="font-size:12px;gap:4px">${ic('lock',12)} Secure page by Meta</span></div>${st<6?`<span class="muted" style="font-size:12.5px;font-weight:600">${st+1} of ${total}</span>`:''}</div>
+    <div class="fbprog"><span style="width:${Math.min(st+1,total)/total*100}%"></span></div>
+    <div class="body pad stack" style="gap:14px;background:#fff">${st<6?`<h2 style="margin:0;font-family:var(--fd);font-size:20px">${titles[st]}</h2>`:''}${body}</div>`;
+}
+function connected(){
+  const d=S.fbd;
+  return `<div class="body pad stack" style="gap:16px;padding-top:56px">
+    <div class="stack" style="align-items:center;text-align:center;gap:10px"><span style="width:72px;height:72px;border-radius:999px;background:var(--green);color:var(--navy);display:flex;align-items:center;justify-content:center">${ic('check',36,2.6)}</span>
+      <h1 class="big-title" style="font-size:24px">Your number is connected</h1><span class="muted" style="font-size:14.5px">${esc(d.phone)} now works with Simple Floww.</span></div>
+    <div class="card" style="padding:4px 16px">${[['Display name',esc(d.name),'<span class="pill p-warn">In review</span>'],['Quality rating','','<span class="pill p-ok">High</span>'],['Daily limit','','<b style="font-weight:600">250 new chats a day to start</b>'],['Free reply window','','<b style="font-weight:600">24 h after each customer message</b>']].map(([k,v,r])=>`<div class="kv" style="align-items:center"><span class="muted">${k}${v?`<b style="display:block;color:var(--navy)">${v}</b>`:''}</span><span>${r}</span></div>`).join('')}</div>
+    <div style="background:var(--tint2);border-radius:14px;padding:12px 14px;font-size:13.5px">Meta usually approves the display name within a few hours. You can send messages while it's in review.</div>
+    <button class="btn btn-p" style="min-height:52px" data-a="go" data-v="testmsg">Next: send a test message</button>
+    <button class="btn" data-a="home">Do it later</button></div>`;
+}
+function testmsg(){
+  const t=S.test, sent=t.st>0, ticks=[['Sent',1],['Delivered',2],['Read',3]];
+  return `${topbar('Send a test message','','Step 2 of 3')}<div class="body pad stack" style="gap:14px">
+    <p class="muted" style="margin:0;font-size:14px">Send a message to your own WhatsApp to check that everything works. Use a number that is <b>not</b> the one you just connected.</p>
+    <label><span class="lbl">Send to</span><span class="row field"><b class="muted">+91</b><input id="testto" inputmode="numeric" maxlength="11" value="${esc(t.to)}" placeholder="Your personal number" style="border:0;outline:none;flex:1;min-width:0;font-size:16px;background:transparent" ${sent?'disabled':''}></span></label>
+    <div class="stack" style="background:var(--chat);border-radius:16px;padding:14px;gap:8px">
+      <span class="pill p-grey" style="align-self:center">Template · hello_world · approved</span>
+      <div class="bubble b-out" style="max-width:90%"><b style="display:block">Hello World</b>Welcome to WhatsApp from ${esc(S.fbd.name)}. This is a test message sent with Simple Floww.<div class="b-time">${sent?'Now':''} ${t.st>=3?'<span style="color:#34b7f1">✓✓</span>':t.st>=2?'✓✓':t.st>=1?'✓':''}</div></div>
+      ${t.reply?`<div class="bubble b-in">Got it! 👍<div class="b-time">Now</div></div>`:''}</div>
+    ${sent?`<div class="row" style="gap:6px;flex-wrap:wrap">${ticks.map(([l,k])=>`<span class="tick${t.st>=k?' on':''}">${t.st>=k?ic('check',14,2.6):''}${l}</span>`).join('')}<span class="tick${t.reply?' on':''}">${t.reply?ic('check',14,2.6):''}Reply received</span></div>`:''}
+    ${t.reply?`<div style="background:var(--ok-bg);color:#0b4d27;border-radius:14px;padding:12px 14px;font-size:14px"><b>Two-way chat works.</b> Your reply opened a 24-hour window, so you can now type freely to this number.</div>
+      <button class="btn btn-p" style="min-height:52px" data-a="go" data-v="welcome">Next: welcome message</button>`
+      :sent?`<p class="muted" style="margin:0;font-size:13.5px;text-align:center">Open WhatsApp on your phone and reply to the message.</p>`
+      :`<button class="btn btn-p" style="min-height:52px" data-a="sendtest">${ic('send',18)} Send test message</button>`}
+  </div>`;
+}
+function welcome(){
+  return `${topbar('Welcome message','','Step 3 of 3')}<div class="body pad stack" style="gap:14px">
+    <p class="muted" style="margin:0;font-size:14px">When someone messages you for the first time, they get this reply right away, even at night.</p>
+    <div class="card row" style="padding:12px 16px;justify-content:space-between"><span><b style="display:block;font-weight:600">Send a welcome message</b><span class="muted" style="font-size:12.5px">To new customers only</span></span><button class="sw${S.welcomeOn?' on':''}" data-a="welcomeon" aria-label="Send a welcome message"></button></div>
+    <label><span class="lbl">Message</span><textarea id="wtext" class="field" style="min-height:110px;padding:12px 14px;resize:none;font-size:15px" ${S.welcomeOn?'':'disabled'}>${esc(S.welcomeText)}</textarea></label>
+    <div><span class="lbl">Add buttons (optional)</span><div class="row" style="gap:6px;flex-wrap:wrap">${['Price list','Book a demo','Talk to a person'].map(b=>`<span class="pill p-blue" style="font-size:13px;padding:6px 12px">${b}</span>`).join('')}</div></div>
+    <button class="btn btn-p" style="min-height:52px;margin-top:6px" data-a="savewelcome">Save and finish</button>
+    <p class="muted" style="margin:0;font-size:12.5px;text-align:center">You can change this any time in Chatbots.</p>
+  </div>`;
+}
+function more(){
+  const rows=[['Campaign results','Sent, read and replied, view only','campaigns'],['Chatbots',S.bots.filter(Boolean).length+' live · pause or resume','bots'],['Templates','Approved, in review, rejected','templates'],['Help & support','Chat with us, tickets, videos','help']];
+  return `<div class="body pad stack" style="gap:12px;padding-top:44px">
+    <div class="row" style="gap:12px"><span class="av" style="width:52px;height:52px;background:var(--navy);color:#fff">AK</span><div style="flex:1;min-width:0"><b style="display:block;font-family:var(--fd);font-size:18px">Abhinandan Kumar</b><span class="muted" style="font-size:13px">Owner · Simple Floww</span></div><button class="btn" style="min-height:38px;font-size:12.5px" data-a="toast" data-v="Switch between your businesses here">Switch</button></div>
+    <div class="card" style="padding:4px 16px">
+      <div class="row" style="justify-content:space-between;min-height:56px;border-bottom:1px solid var(--line2)"><span><b style="display:block;font-weight:600">My status</b><span class="muted" style="font-size:12.5px">${S.online?'New chats can be assigned to you':'New chats skip you'}</span></span>
+        <span class="row" style="background:var(--cloud);border-radius:10px;padding:3px;gap:2px">${[['Online',true],['Away',false]].map(([l,v])=>`<button style="border:0;border-radius:8px;padding:6px 12px;min-height:34px;font-size:13px;font-weight:600;${S.online===v?'background:#fff;box-shadow:0 1px 2px rgba(10,15,71,.12)':'background:transparent;color:var(--slate)'}" data-a="online" data-v="${v}">${l}</button>`).join('')}</span></div>
+      <div class="row" style="justify-content:space-between;min-height:56px"><span><b style="display:block;font-weight:600">Privacy mode</b><span class="muted" style="font-size:12.5px">Hide customer phone numbers</span></span><button class="sw${S.privacy?' on':''}" aria-label="Privacy mode" data-a="privacy"></button></div></div>
+    <div class="row" style="background:var(--navy);color:#fff;border-radius:18px;padding:14px 16px"><span style="flex:1"><span style="display:block;font-size:12px;color:#b8c2e6;font-weight:600">MESSAGE WALLET</span><b style="font-family:var(--fd);font-size:24px">${money(S.wallet)}</b></span><button class="btn btn-g" style="min-height:44px" data-a="go" data-v="recharge">Recharge</button></div>
+    <button class="card row" style="padding:12px 16px;text-align:left" data-a="go" data-v="${S.setup.num?'more':'connect'}"><span class="row" style="flex:1;gap:12px"><span class="d" style="width:36px;height:36px;border-radius:10px;background:${S.setup.num?'var(--ok-bg)':'var(--warn-bg)'};color:${S.setup.num?'var(--ok)':'var(--warn)'};display:flex;align-items:center;justify-content:center">${ic('phone',18)}</span><span><b style="display:block;font-weight:600">WhatsApp number</b><span class="muted" style="font-size:12.5px">${S.setup.num?esc(S.fbd.phone)+' · Connected':'Not connected · tap to connect'}</span></span></span>${S.setup.num?'<span class="pill p-ok">Live</span>':`<span class="muted">${ic('chev',18)}</span>`}</button>
+    <div class="card" style="overflow:hidden">${rows.map(([l,s,to])=>`<button class="list-row" style="align-items:center" data-a="go" data-v="${to}"><span style="flex:1"><b style="display:block;font-weight:600">${l}</b><span class="muted" style="font-size:12.5px">${s}</span></span><span class="muted">${ic('chev',18)}</span></button>`).join('')}</div>
+    <p class="muted" style="margin:0;font-size:12.5px;text-align:center">Flows, roles, integrations and billing details are on the web panel.</p>
+    <button style="border:0;background:none;color:var(--blue);font-weight:600;min-height:40px" data-a="resetsetup">Restart number setup (demo)</button>
+    <button style="border:0;background:none;color:var(--bad);font-weight:600;min-height:40px" data-a="logout">Log out</button>
+  </div>${tabbar()}`;
+}
+function campaigns(){
+  const camps=[['Webinar invite, 30 Nov','Scheduled','37 people · 28 Nov, 11:00 AM',0,0],['Dussehra offer','Completed','1,153 sent · 20 Oct',55,6],['Webinar 27 Oct','Completed','1,235 sent · 25 Oct',47,4],['Rent reminder','Mostly failed','378 of 392 numbers not on WhatsApp',3,0]];
+  const pc={Completed:'p-ok',Scheduled:'p-blue','Mostly failed':'p-bad'};
+  return `${topbar('Campaign results','', 'Create campaigns on the web panel')}<div class="body pad stack" style="gap:10px">
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">${[['SENT','2,412'],['READ','53%'],['REPLIED','6.1%']].map(([a,b])=>`<div class="card" style="padding:10px 12px"><span class="sec-h" style="display:block;font-size:11px">${a}</span><b style="font-family:var(--fd);font-size:20px">${b}</b></div>`).join('')}</div>
+    ${camps.map(([n,s,m,r,p])=>`<div class="card stack" style="padding:12px 14px;gap:8px"><span class="row" style="justify-content:space-between"><b style="font-weight:600">${n}</b><span class="pill ${pc[s]}">${s}</span></span><span class="muted" style="font-size:12.5px">${m}</span>
+      ${s==='Scheduled'?'':`<span class="row" style="justify-content:space-between;font-size:12px"><span>Read</span><b>${r}%</b></span><span style="height:6px;border-radius:999px;background:var(--tint);overflow:hidden"><span style="display:block;height:100%;width:${r}%;background:var(--blue);border-radius:999px"></span></span>
+      <span class="row" style="justify-content:space-between;font-size:12px"><span>Replied</span><b>${p}%</b></span><span style="height:6px;border-radius:999px;background:var(--ok-bg);overflow:hidden"><span style="display:block;height:100%;width:${p}%;background:var(--green);border-radius:999px"></span></span>`}</div>`).join('')}</div>`;
+}
+function bots(){
+  const list=[['Welcome message','First message from a new customer','Ran 124 times this week · 68% completed',''],['Pricing info','Message has "price", "rate" or "cost"','Ran 41 times this week',''],['Webinar reminder','Message has "send info"','Paused automatically','The webinar date (27 Oct) has passed.'],['Test bot','Message has "know more"','Draft, not live','Overlaps with "Pricing info". Change the trigger on the web panel first.']];
+  return `${topbar('Chatbots','','Pause or resume. Edit flows on the web panel.')}<div class="body pad stack" style="gap:10px">${list.map(([n,t,s,w],i)=>`<div class="card stack" style="padding:14px;gap:8px">
+    <div class="row"><span style="flex:1;min-width:0"><b style="display:block;font-weight:600">${n}</b><span class="muted" style="font-size:12.5px">${t}</span></span><button class="sw g${S.bots[i]?' on':''}" aria-label="${S.bots[i]?'Pause':'Resume'} ${n}" data-a="bot" data-v="${i}"></button></div>
+    <span class="muted" style="font-size:12.5px">${S.bots[i]?(i<2?s:'Live'):(i<2?'Paused':s)}</span>${w?`<span style="font-size:12.5px;background:var(--warn-bg);color:#5c3200;border-radius:10px;padding:8px 10px">${w}</span>`:''}</div>`).join('')}</div>`;
+}
+function templates(){
+  const list=[['Demo reminder','Utility','Approved','p-ok',''],['Follow-up check-in','Marketing','Approved','p-ok',''],['Festive offer','Marketing','In review','p-warn','Meta usually replies within 24 hours'],['Payment reminder','Utility','Rejected','p-bad','A template cannot start with a variable. Fix it on the web panel.']];
+  return `${topbar('Templates','','Create and edit templates on the web panel')}<div class="body pad stack" style="gap:10px">${list.map(([n,c,s,p,note])=>`<div class="card stack" style="padding:12px 14px;gap:6px"><span class="row" style="justify-content:space-between"><b style="font-weight:600">${n}</b><span class="pill ${p}">${s}</span></span><span class="muted" style="font-size:12.5px">${c}</span>${note?`<span class="muted" style="font-size:12.5px">${note}</span>`:''}</div>`).join('')}</div>`;
+}
+function recharge(){
+  const g=Math.round(S.amt*.18);
+  return `${topbar('Recharge wallet')}<div class="body pad stack" style="gap:14px">
+    <div style="background:var(--navy);color:#fff;border-radius:18px;padding:16px"><span style="display:block;font-size:12px;color:#b8c2e6;font-weight:600">CURRENT BALANCE</span><b style="font-family:var(--fd);font-size:30px">${money(S.wallet)}</b><span style="display:block;font-size:13px;color:#b8c2e6">About ${Math.floor(S.wallet/0.86)} marketing messages</span></div>
+    <div><span class="lbl">Add money</span><div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">${[500,1000,2000].map(v=>`<button class="opt${S.amt===v?' on':''}" style="text-align:center;font-weight:700;min-height:50px" data-a="amt" data-v="${v}">${money(v)}</button>`).join('')}</div></div>
+    <label class="row field" style="gap:8px"><b class="muted">₹</b><input id="customamt" inputmode="numeric" placeholder="Other amount" style="border:0;outline:none;flex:1;min-width:0;font-size:16px;background:transparent"></label>
+    <div class="card" style="padding:4px 14px">${[['Amount',money(S.amt)],['GST (18%)',money(g)]].map(([a,b])=>`<div class="row" style="justify-content:space-between;min-height:44px;border-bottom:1px solid var(--line2)"><span class="muted">${a}</span><b>${b}</b></div>`).join('')}<div class="row" style="justify-content:space-between;min-height:48px"><b>You pay</b><b style="font-family:var(--fd);font-size:18px">${money(S.amt+g)}</b></div></div>
+    <span class="muted" style="font-size:12.5px;text-align:center">UPI, card or net banking. GST invoice goes to your email.</span>
+    <button class="btn btn-g" style="min-height:54px;font-size:16px" data-a="pay">Pay ${money(S.amt+g)}</button></div>`;
+}
+function newchat(){
+  return `<div class="top"><button class="iconbtn" data-a="back" aria-label="Close">${ic('x')}</button><h1>New chat or lead</h1></div>
+    <form id="newf" class="body pad stack" style="gap:14px">
+      <label><span class="lbl">Mobile number</span><span class="row field"><b class="muted">+91</b><input id="nnum" inputmode="numeric" placeholder="98XXX XXXXX" style="border:0;outline:none;flex:1;min-width:0;font-size:16px;background:transparent"></span></label>
+      <label><span class="lbl">Name</span><input id="nname" class="field" placeholder="Customer name"></label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><label><span class="lbl">Stage</span><select id="nstage" class="field"><option>New Lead</option><option>Contacted</option><option>Qualified</option></select></label><label><span class="lbl">Source</span><select class="field"><option>Walk-in</option><option>Phone call</option><option>Referral</option></select></label></div>
+      <div style="background:var(--tint2);border-radius:14px;padding:12px 14px;font-size:13.5px">The first message to a new number must be an approved template. You can type freely once they reply.</div>
+      <div class="opt on"><span class="row" style="justify-content:space-between"><b style="font-weight:600">Welcome · first contact</b><span class="pill p-blue">Marketing</span></span><span class="muted" style="display:block;font-size:13px;margin-top:4px">Hi {name}, thanks for your interest in Simple Floww. How can we help you today?</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:auto"><button type="button" class="btn" data-a="newsave" data-v="0">Save lead only</button><button type="submit" class="btn btn-p">Save and send</button></div>
+    </form>`;
+}
+function help(){
+  const tabs=[['chat','Chat'],['tickets','Tickets'],['videos','Videos']];
+  let body='';
+  if(S.helpTab==='chat') body=`<div class="body stack" id="hthread" style="padding:16px;gap:10px;background:var(--cloud)">${S.help.map(m=>m.me?`<div class="bubble" style="align-self:flex-end;background:var(--blue);color:#fff;border-top-right-radius:4px">${esc(m.t)}</div>`:`<div style="align-self:flex-start;max-width:88%"><span class="muted" style="font-size:11.5px">${m.who}</span><div class="bubble" style="max-width:100%;background:${m.who==='Support team'?'var(--ok-bg)':'#fff'};border:1px solid var(--line);border-top-left-radius:4px">${esc(m.t)}</div></div>`).join('')}
+      ${S.human?'':`<button class="btn" style="align-self:flex-start;min-height:38px" data-a="human">Talk to a person</button>`}</div>
+    <form id="helpf" class="row" style="padding:10px 12px 24px;border-top:1px solid var(--line);gap:8px;background:#fff;flex:none"><input id="hq" autocomplete="off" placeholder="Ask a question" aria-label="Ask a question" style="flex:1;min-width:0;background:var(--cloud);border:0;border-radius:22px;min-height:46px;padding:0 14px;font-size:15px;outline:none"><button class="iconbtn" type="submit" style="background:var(--blue);color:#fff;border-radius:999px" aria-label="Send">${ic('send',20,2)}</button></form>`;
+  if(S.helpTab==='tickets') body=`<div class="body pad stack" style="gap:10px"><button class="btn btn-p" data-a="ticket">+ Raise a ticket</button>${[['#SF-1043','Template rejected','In progress','p-blue','Just now'],['#SF-1042','Campaign mostly failed','Waiting on you','p-warn','Today'],['#SF-1031','Recharge not credited','Resolved','p-ok','12 Nov']].map(([id,s,st,p,w])=>`<div class="card stack" style="padding:12px 14px;gap:6px"><span class="row" style="justify-content:space-between"><b style="font-weight:600">${s}</b><span class="pill ${p}">${st}</span></span><span class="muted" style="font-size:12.5px">${id} · ${w}</span></div>`).join('')}</div>`;
+  if(S.helpTab==='videos') body=`<div class="body pad stack" style="gap:10px">${[['Reply from the app','1:00'],['Send a template after 24 hours','0:50'],['Update a lead and set a follow-up','1:10'],['Turn notifications on','0:40'],['Recharge your wallet','0:40']].map(([t,d])=>`<button class="card row" style="padding:10px;gap:12px;text-align:left" data-a="toast" data-v="Video plays here (${d})"><span style="width:84px;height:52px;border-radius:10px;background:linear-gradient(135deg,#e7eafe,#def8fe);display:flex;align-items:center;justify-content:center;flex:none"><span style="width:28px;height:28px;border-radius:999px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center">${ic('play',12)}</span></span><span style="flex:1"><b style="display:block;font-weight:600">${t}</b><span class="muted" style="font-size:12.5px">${d}</span></span></button>`).join('')}</div>`;
+  return `<div style="background:var(--navy);color:#fff;padding:44px 12px 14px;flex:none" class="stack">
+      <div class="row"><button class="iconbtn" style="color:#fff" data-a="back" aria-label="Back">${ic('back')}</button><div style="flex:1"><b style="display:block;font-family:var(--fd);font-size:18px">Help &amp; support</b><span style="font-size:12.5px;color:#b8c2e6">Team online · replies in about 10 min</span></div></div>
+      <div class="row" style="background:rgba(255,255,255,.1);border-radius:12px;padding:4px;margin:10px 4px 0;gap:2px">${tabs.map(([id,l])=>`<button style="flex:1;border:0;border-radius:9px;min-height:38px;font-weight:600;${S.helpTab===id?'background:#fff;color:var(--navy)':'background:transparent;color:#cdd4ff'}" data-a="htab" data-v="${id}">${l}</button>`).join('')}</div></div>${body}`;
+}
+const SCREENS={connect,fbflow,connected,testmsg,welcome,login,otp,home,chats,chat,lead,leads,followups,notifications,more,campaigns,bots,templates,recharge,newchat,help};
+
+function render(top){
+  const root=document.getElementById('app');
+  const prev=root.querySelector('.body'); const y=prev&&!top?prev.scrollTop:0;
+  root.innerHTML=(SCREENS[S.screen]||home)()+(S.toast?`<div class="toast" role="status">${esc(S.toast)}</div>`:'');
+  const b=root.querySelector('.body'); if(b) b.scrollTop=y;
+  const th=document.getElementById('thread')||document.getElementById('hthread'); if(th&&(top||S.scrollDown)){ th.scrollTop=th.scrollHeight; S.scrollDown=false; }
+}
+function aiAnswer(q){
+  const s=q.toLowerCase();
+  if(/template|reject/.test(s)) return 'Templates are often rejected when they start or end with a variable, have no sample value, or an offer is sent as Utility.';
+  if(/24|window|reply/.test(s)) return 'You can reply freely for 24 hours after the customer\'s last message. After that, send an approved template from the + button.';
+  if(/recharge|wallet|pay/.test(s)) return 'Go to More → Recharge. Pick an amount and pay by UPI, card or net banking. The balance updates in a minute.';
+  if(/follow/.test(s)) return 'Open the lead, tap Follow-up, pick a time and save. You get an alert before it is due.';
+  return 'I could not find an exact answer. Tap "Talk to a person" and our team will reply here.';
+}
+
+// ---------- events ----------
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-a]'); if(!el) return;
+  const a=el.dataset.a, v=el.dataset.v, c=CHATS[S.chat];
+  switch(a){
+    case 'back': return back();
+    case 'go': if(el.dataset.tab) S.chatsTab=el.dataset.tab; if(v==='lead') S.cpTab='timeline'; return go(v);
+    case 'login': return go('home');
+    case 'logout': S.stack=[]; S.screen='login'; return render(true);
+    case 'home': S.stack=[]; S.screen='home'; return render(true);
+    case 'hidesetup': S.setupHidden=true; return render();
+    case 'resetsetup': S.setup={num:false,test:false,welcome:false}; S.setupHidden=false; S.fb=0; S.test={to:'',st:0,reply:false}; S.fbd.phone=''; S.fbd.code=''; S.stack=[]; S.screen='home'; return render(true);
+    case 'fbmode': S.fbd.mode=v; return render();
+    case 'fbstart': S.fb=0; return go('fbflow');
+    case 'fbclose': S.screen='connect'; S.stack.pop(); toast('Setup closed. Your progress is saved.'); return;
+    case 'fbbiz': fbKeep(); S.fbd.biz=v; return render();
+    case 'fbvia': fbKeep(); S.fbd.via=v; return render();
+    case 'fbnext': {
+      fbKeep(); const d=S.fbd;
+      if(S.fb===1&&d.biz==='create'&&!d.bizName.trim()) return toast('Enter your business name');
+      if(S.fb===2&&!d.name.trim()) return toast('Enter a display name');
+      if(S.fb===3){ const n=d.phone.replace(/\D/g,''); if(n.length!==10) return toast('Enter a 10-digit mobile number'); d.phone='+91 '+n.slice(0,5)+' '+n.slice(5); toast('Code sent to '+d.phone); }
+      if(S.fb===4&&!/^\d{6}$/.test(d.code)) return toast('Enter the 6-digit code');
+      S.fb++; render(true);
+      if(S.fb===6) setTimeout(()=>{ S.setup.num=true; S.stack=[]; S.screen='connected'; render(true); },2200);
+      return;
+    }
+    case 'sendtest': {
+      const n=((document.getElementById('testto')||{}).value||'').replace(/\D/g,''); if(n.length!==10) return toast('Enter your 10-digit WhatsApp number');
+      if(S.fbd.phone.replace(/\D/g,'').endsWith(n)) return toast('Use a different number from the one you connected');
+      S.test.to=n; S.test.st=1; render();
+      [[900,()=>S.test.st=2],[1900,()=>S.test.st=3],[3600,()=>{ S.test.reply=true; S.setup.test=true; }]].forEach(([ms,f])=>setTimeout(()=>{ f(); if(S.screen==='testmsg'||S.screen==='home') render(); },ms));
+      return;
+    }
+    case 'welcomeon': S.welcomeText=(document.getElementById('wtext')||{}).value||S.welcomeText; S.welcomeOn=!S.welcomeOn; return render();
+    case 'savewelcome': S.welcomeText=(document.getElementById('wtext')||{}).value||S.welcomeText; S.setup.welcome=true; S.setup.test=true; S.setup.num=true; S.stack=[]; S.screen='home'; toast(S.welcomeOn?'Welcome message is on. Setup complete!':'Setup complete!'); return;
+    case 'toast': return toast(v);
+    case 'open': S.chat=v; CHATS[v].unread=0; return go('chat');
+    case 'openlead': S.chat=v; S.cpTab='timeline'; return go('lead');
+    case 'call': return toast('Calling '+phone(CHATS[v].phone)+' (demo)');
+    case 'ctab': S.chatsTab=v; return render(true);
+    case 'lview': S.leadsView=v; return render(true);
+    case 'quick': { const inp=document.getElementById('msg'); if(inp){ inp.value=QUICK[+v][1]; inp.focus(); } return; }
+    case 'sheet': S.sheet=v; return render();
+    case 'closesheet': S.sheet=null; return render();
+    case 'tpl': S.tpl=+v; return render();
+    case 'sendtpl': { const t=TEMPLATES[S.tpl]; c.msgs.push({o:1,t:t.body.replace('{name}',c.name.split(' ')[0]).replace('{date}','tomorrow 4 PM'),at:'Now'}); c.closed=false; c.waiting=false; S.wallet=Math.round((S.wallet-t.rate)*100)/100; S.sheet=null; S.scrollDown=true; return toast('Template sent'); }
+    case 'stage': { if(c.stage===v&&X(c).inPipe) return; c.stage=v; X(c).inPipe=true; log(c,'trend','Stage moved to '+v); if(v==='Won'||v==='Lost') toast('Lead marked '+v.toLowerCase()); render(); const st=document.querySelector('.step.cur'); if(st) st.scrollIntoView({inline:'center',block:'nearest'}); return; }
+    case 'addpipe': X(c).inPipe=true; c.stage='New Lead'; log(c,'trend','Added to '+X(c).pipe,'Stage: New Lead'); return toast('Added to Sales Pipeline · New Lead');
+    case 'cptab': S.cpTab=v; return render();
+    case 'assign': c.owner=v; c.mine=v==='You'?1:0; c.un=v==='Unassigned'?1:0; S.sheet=null; log(c,'user',v==='Unassigned'?'Lead unassigned':'Assigned to '+v); return toast(v==='Unassigned'?'Lead unassigned':'Assigned to '+v+(v==='You'?'':' · they were notified'));
+    case 'callr': S.callR=+v; return render();
+    case 'savecall': { const r=['Picked up','No answer','Busy','Call back later'][S.callR||0], n=(document.getElementById('callnote')||{}).value||''; X(c).calls.unshift({r,n,at:'Just now',by:'You'}); log(c,'phone','Call · '+r,n||'by You'); S.sheet=null; S.cpTab='calls'; return toast('Call logged'); }
+    case 'savevalue': { const n=parseInt(((document.getElementById('dealv')||{}).value||'').replace(/\D/g,''))||0; X(c).value=n; log(c,'trend','Deal value set to '+money(n)); S.sheet=null; return toast('Deal value saved'); }
+    case 'tagtog': c.tags=c.tags.includes(v)?c.tags.filter(t=>t!==v):c.tags.concat(v); return render();
+    case 'email': return toast(X(c).email?'Opening email to '+X(c).email:'No email saved. Add it in Edit');
+    case 'ai': S.ai[S.chat]=!S.ai[S.chat]; return render();
+    case 'addtag': if(!c.tags.includes('Follow up')) c.tags.push('Follow up'); return render();
+    case 'fuwhen': S.fuWhen=+v; return render();
+    case 'futype': S.fuType=+v; return render();
+    case 'savefu': { const whens=['Today, 5:00 PM','Tomorrow, 11:00 AM','Mon, 11:00 AM','Fri, 11:00 AM']; c.next=whens[S.fuWhen]; c.late=0; const n=(document.getElementById('funote')||{}).value||'Follow up';
+      S.follow=S.follow.filter(f=>f.c!==S.chat); S.follow.push({id:'f'+Date.now(),g:S.fuWhen===0?'Today':S.fuWhen===1?'Tomorrow':'Tomorrow',c:S.chat,when:whens[S.fuWhen].split(', ')[1],note:n}); log(c,'clock',['Call','WhatsApp','Meeting','Reminder'][S.fuType]+' set for '+c.next,n); S.sheet=null; return toast('Follow-up saved: '+c.next); }
+    case 'done': S.follow=S.follow.filter(f=>f.id!==v); return toast('Marked done');
+    case 'readall': S.readAll=true; return render();
+    case 'online': S.online=v==='true'; return render();
+    case 'privacy': S.privacy=!S.privacy; return toast(S.privacy?'Phone numbers hidden':'Phone numbers shown');
+    case 'bot': S.bots[+v]=!S.bots[+v]; return toast(S.bots[+v]?'Bot resumed':'Bot paused');
+    case 'amt': S.amt=+v; { const ci=document.getElementById('customamt'); if(ci) ci.value=''; } return render();
+    case 'pay': S.wallet=Math.round((S.wallet+S.amt)*100)/100; toast('Payment successful (demo). '+money(S.amt)+' added.'); return back();
+    case 'newsave': return saveNew(false);
+    case 'htab': S.helpTab=v; return render(true);
+    case 'human': S.human=true; S.help.push({me:1,t:'Talk to a person'},{who:'Support team',t:'Hi, I am Gunjan from support. I have opened ticket #SF-1044. How can I help?'}); S.scrollDown=true; return render();
+    case 'ticket': return toast('Ticket form opens here');
+  }
+});
+function fbKeep(){
+  const g=id=>{ const el=document.getElementById(id); return el?el.value:null; }, d=S.fbd;
+  if(g('fbbizname')!==null) d.bizName=g('fbbizname'); if(g('fbsite')!==null) d.site=g('fbsite');
+  if(g('fbname')!==null) d.name=g('fbname'); if(g('fbcat')!==null) d.cat=g('fbcat');
+  if(g('fbphone')!==null) d.phone=g('fbphone'); if(g('fbcode')!==null) d.code=g('fbcode').trim();
+}
+function saveNew(send){
+  const num=(document.getElementById('nnum').value||'').trim(), name=(document.getElementById('nname').value||'').trim()||'New contact';
+  const id='N'+Date.now(); const ini=name.split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  CHATS[id]={ini,name,phone:'+91 '+(num||'98XXX XXXXX'),src:'Walk-in',time:'Now',unread:0,owner:'You',mine:1,waiting:false,stage:document.getElementById('nstage').value,next:'Not set',tags:[],note:'',closed:!send,
+    msgs:send?[{o:1,t:'Hi '+name.split(' ')[0]+', thanks for your interest in Simple Floww. How can we help you today?',at:'Now'}]:[{o:0,t:'Lead added from the app',at:'Now'}]};
+  ORDER.unshift(id); S.chat=id; S.stack=[]; S.screen=send?'chat':'lead'; toast(send?'Saved and template sent':'Lead saved');
+}
+document.addEventListener('change',e=>{ if(e.target.id==='pipe'){ const c=CHATS[S.chat]; X(c).pipe=e.target.value; log(c,'trend','Moved to '+e.target.value); render(); } });
+document.addEventListener('submit',e=>{
+  e.preventDefault(); const id=e.target.id;
+  if(id==='loginf') return go('otp');
+  if(id==='otpf'){ S.stack=[]; S.screen='home'; return render(true); }
+  if(id==='sendf'){ const inp=document.getElementById('msg'); const t=inp.value.trim(); if(!t) return; const c=CHATS[S.chat]; c.msgs.push({o:1,t,at:'Now'}); c.waiting=false; S.scrollDown=true; render(); setTimeout(()=>{const m=document.getElementById('msg'); if(m) m.focus();},0); return; }
+  if(id==='newf') return saveNew(true);
+  if(id==='tlf'){ const t=document.getElementById('tlnote').value.trim(); if(!t) return; log(CHATS[S.chat],'note','Note',t); return render(); }
+  if(id==='editf'){ const c=CHATS[S.chat], x=X(c), f=e.target.elements; c.name=f.name.value.trim()||c.name; ['email','company','city','budget'].forEach(k=>x[k]=f[k].value.trim()); log(c,'pencil','Profile updated'); S.sheet=null; return toast('Profile saved'); }
+  if(id==='helpf'){ const q=document.getElementById('hq').value.trim(); if(!q) return; S.help.push({me:1,t:q}); S.help.push(S.human?{who:'Support team',t:'Thanks, checking this now. I will reply here in a few minutes.'}:{who:'Simple Floww AI',t:aiAnswer(q)}); S.scrollDown=true; return render(); }
+});
+document.addEventListener('input',e=>{ if(e.target.id==='customamt'){ const n=parseInt(e.target.value.replace(/\D/g,''),10); if(n>0){ S.amt=n; const pos=e.target.value; render(); const ci=document.getElementById('customamt'); ci.value=pos; ci.focus(); } } });
+document.addEventListener('change',e=>{ if(e.target.id==='note') CHATS[S.chat].note=e.target.value; });
+render(true);
+})();
+</script>
+
+</body>
+</html>
